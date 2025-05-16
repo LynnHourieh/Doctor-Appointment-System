@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[] // <- This line shows: One Role ➡️ Many Users
+}
+
+model Status {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
+
+model User {
+  id            String   @id @default(uuid())
+  full_name     String
+  email         String   @unique
+  password      String
+  role          Role     @relation(fields: [roleId], references: [id])
+  roleId        Int
+  status        Status   @relation(fields: [statusId], references: [id])
+  statusId      Int
+  created_at    DateTime @default(now())
+
+  doctor        Doctor?
+  patient       Patient?
+  notifications Notification[]
+}
+
+model Doctor {
+  id               String        @id @default(uuid())
+  user             User          @relation(fields: [id], references: [id])
+  specialty        String
+  bio              String?
+  phone            String?
+  license_number   String?
+  experience_years Int?
+  education        String?
+  languages        String?
+  photo_url        String?
+  clinic_name      String?
+  location         String?
+  is_active        Boolean       @default(true)
+  schedules        Schedule[]
+  appointments     Appointment[]
+}
+
+model Patient {
+  id               String    @id @default(uuid())
+  user             User      @relation(fields: [id], references: [id])
+  date_of_birth    DateTime?
+  gender           String?
+  phone            String?
+  address          String?
+  known_conditions String?
+  allergies        String?
+  blood_type       String?
+  weight_kg        Float?
+  height_cm        Float?
+
+  appointments Appointment[]
+}
+
+model Schedule {
+  id          String   @id @default(uuid())
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId    String
+  day_of_week Int
+  start_time  DateTime
+  end_time    DateTime
+
+  appointments Appointment[]
+}
+
+model Appointment {
+  id               String    @id @default(uuid())
+  doctor           Doctor    @relation(fields: [doctorId], references: [id])
+  doctorId         String
+  patient          Patient   @relation(fields: [patientId], references: [id])
+  patientId        String
+  schedule         Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId       String?
+  appointment_date DateTime
+  status           String    @default("pending") // Could use enum
+  reason           String?
+  created_at       DateTime  @default(now())
+}
+
+model Notification {
+  id      String   @id @default(uuid())
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  message String
+  type    String // e.g. 'email', 'sms'
+  sent_at DateTime @default(now())
+}

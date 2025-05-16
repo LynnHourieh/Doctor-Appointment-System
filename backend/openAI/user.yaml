@@ -1,0 +1,152 @@
+openapi: 3.0.0
+info:
+  title: User Registration API
+  version: 1.0.0
+  description: API for user registration with auto-approval for admin accounts.
+
+paths:
+  /api/users/register:
+    post:
+      summary: Register a new user
+      description: |
+        Registers a user as admin, doctor, or patient. 
+        If the role is **admin**, the user is immediately approved.
+        Other roles (doctor, patient) require admin approval.
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - full_name
+                - email
+                - password
+                - roleId
+              properties:
+                full_name:
+                  type: string
+                  example: "Lynn Hourieh"
+                email:
+                  type: string
+                  format: email
+                  example: "lynn@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "SecureP@ss123"
+                roleId:
+                  type: integer
+                  example: 2
+                  description: |
+                    Role ID of the user:
+                    - 1 = Admin (auto-approved)
+                    - 2 = Doctor
+                    - 3 = Patient
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Registered. Waiting for admin approval.
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 12
+                      email:
+                        type: string
+                        example: lynn@example.com
+                      roleId:
+                        type: integer
+                        example: 2
+                      statusId:
+                        type: integer
+                        example: 2
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: All fields are required.
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Something went wrong
+
+  /api/users/login:
+    post:
+      summary: Login user
+      description: Logs in a user and returns a JWT token if the account is approved.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "lynn@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "SecureP@ss123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login successful
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 10
+                      email:
+                        type: string
+                        example: lynn@example.com
+                      roleId:
+                        type: integer
+                        example: 2
+        '400':
+          description: Missing credentials
+        '401':
+          description: Invalid credentials
+        '403':
+          description: Account not approved yet
+        '500':
+          description: Internal server error
