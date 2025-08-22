@@ -1,0 +1,39 @@
+@import "../../theme.scss";
+
+html.wp-toolbar[dir="rtl"] {
+  .menu-optionsList {
+    left: 10px;
+    right: unset;
+    direction: ltr;
+  }
+}
+.menu-optionsContainer {
+  position: relative;
+  width: min-content;
+}
+
+.menu-optionsList {
+  position: absolute;
+  right: 0;
+  z-index: 9999;
+  margin-block-start: 0px;
+  margin-block-end: 0px;
+  padding: 6px;
+  background-color: #fefefe;
+  border: 1px solid #ddd;
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  display: flex;
+  flex-direction: column;
+  max-width: 340px;
+  width: max-content;
+  min-width: 120px;
+  border-radius: $border-radius;
+  max-height: 260px;
+  overflow: auto;
+}
+
+#menu-option {
+  padding: 8px;
+}

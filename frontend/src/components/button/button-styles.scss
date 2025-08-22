@@ -1,0 +1,188 @@
+@import "../../theme.scss";
+
+.button-root {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  width: max-content;
+  min-width: 66px;
+  height: 34px;
+  background-color: $secondary;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: $secondary-dark;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: $btn-disabled;
+    color: $text-disabled;
+  }
+
+  svg {
+    height: 16px;
+    width: 16px;
+    fill: currentColor;
+  }
+
+  &.rounded-button {
+    border-radius: 50px;
+  }
+
+  &.large-button {
+    height: 42px;
+    padding-inline: 0.9rem;
+  }
+
+  &.circular-button {
+    border-radius: 50%;
+    padding: 0;
+    aspect-ratio: 1;
+    min-width: unset;
+  }
+
+  &.collapse {
+    padding: 0.25rem;
+    min-width: unset;
+    height: unset;
+    width: unset;
+  }
+
+  &.destructive-button {
+    background-color: $red;
+    color: white;
+
+    &:hover {
+      background-color: $red-dark;
+    }
+
+    &:disabled {
+      background-color: $red-light;
+      color: white;
+    }
+  }
+
+  &.secondary-button {
+    background-color: transparent;
+    color: $secondary;
+    border: 1px solid #dadce0;
+
+    &.destructive-button {
+      border-color: #ff060633;
+      color: $red;
+    }
+
+    &:hover {
+      background-color: rgba($secondary, 0.04);
+      color: $secondary-dark;
+
+      &.destructive-button {
+        background-color: rgba($red, 0.04);
+        color: $red-dark;
+      }
+    }
+
+    &:disabled {
+      color: $text-disabled;
+      background-color: transparent;
+      border-color: #e7e7e7;
+
+      &.destructive-button {
+        color: $red-light;
+        background-color: transparent;
+        border-color: #ff060633;
+      }
+    }
+  }
+
+  &.tertiary-button {
+    background-color: transparent;
+    color: $secondary;
+
+    &.destructive-button {
+      color: $red;
+    }
+
+    &:hover {
+      background-color: rgba($secondary, 0.04);
+      color: $secondary-dark;
+
+      &.destructive-button {
+        background-color: rgba($red, 0.04);
+        color: $red-dark;
+      }
+    }
+
+    &:disabled {
+      background-color: transparent;
+      color: $text-disabled;
+
+      &.destructive-button {
+        background-color: transparent;
+        color: $text-disabled;
+      }
+    }
+  }
+
+  &.ghost-button {
+    background-color: rgba($secondary, 0.04);
+    color: $secondary;
+
+    &.destructive-button {
+      background-color: rgba($red, 0.04);
+      color: $red;
+    }
+
+    &:hover {
+      background-color: rgba($secondary, 0.06);
+      color: $secondary-dark;
+
+      &.destructive-button {
+        background-color: rgba($red, 0.06);
+      }
+    }
+
+    &:disabled {
+      background-color: rgba(100, 100, 100, 0.04);
+      color: $text-disabled;
+    }
+  }
+
+  &.text-button {
+    color: $secondary;
+    background-color: transparent;
+
+    padding: 0;
+    height: auto;
+
+    &.destructive-button {
+      color: $red;
+    }
+
+    &:hover {
+      color: $secondary-dark;
+
+      &.destructive-button {
+        color: $red-dark;
+      }
+    }
+  }
+
+  .button-flagIcon {
+    svg {
+      fill: #ddb13e;
+      height: 12px;
+      width: 12px;
+    }
+  }
+}

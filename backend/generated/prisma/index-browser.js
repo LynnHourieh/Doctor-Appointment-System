@@ -132,7 +132,7 @@ exports.Prisma.StatusScalarFieldEnum = {
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  full_name: 'full_name',
+  fullName: 'fullName',
   email: 'email',
   password_hash: 'password_hash',
   roleId: 'roleId',

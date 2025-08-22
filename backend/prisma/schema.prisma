@@ -27,9 +27,12 @@ model Status {
 
 model User {
   id            String   @id @default(uuid())
-  full_name     String
+  fullName     String
   email         String   @unique
+  gender        String
   password      String
+ dateOfBirth    String
+
   role          Role     @relation(fields: [roleId], references: [id])
   roleId        Int
   status        Status   @relation(fields: [statusId], references: [id])
@@ -41,10 +44,15 @@ model User {
   notifications Notification[]
 }
 
+model Specialty {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  doctors Doctor[] // One specialty to many doctors
+}
+
 model Doctor {
   id               String   @id @default(uuid())
   user             User     @relation(fields: [id], references: [id])
-  specialty        String
   bio              String?
   phone            String?
   license_number   String?
@@ -57,21 +65,20 @@ model Doctor {
   is_active        Boolean  @default(true)
   schedules        Schedule[]
   appointments     Appointment[]
+  specialtyId Int
+  specialty   Specialty @relation(fields: [specialtyId], references: [id])
 }
 
 model Patient {
   id               String   @id @default(uuid())
   user             User     @relation(fields: [id], references: [id])
-  date_of_birth    DateTime?
-  gender           String?
   phone            String?
   address          String?
-  known_conditions String?
-  allergies        String?
+  known_conditions String[]
+  allergies        String[]
   blood_type       String?
   weight_kg        Float?
   height_cm        Float?
-
   appointments     Appointment[]
 }
 

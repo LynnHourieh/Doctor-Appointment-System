@@ -3,7 +3,7 @@ import { getPendingUsers, updateUserStatus } from "../controllers/admin.controll
 import { authenticateToken } from "../middleware/auth.js";
 import { isAdmin } from "../middleware/auth.js";
 const router = express.Router();
-router.use(authenticateToken)// Apply to all admin routes
+router.use(authenticateToken);
 router.use(isAdmin);
 router.get("/users/pending", getPendingUsers);
 router.patch("/users/:id", updateUserStatus); 

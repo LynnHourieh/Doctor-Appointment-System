@@ -1,0 +1,40 @@
+@import "../../theme.scss";
+
+.emptyState-root {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+
+  span {
+    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    color: $primary;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #5b5b5b;
+  }
+
+  & > svg {
+    fill: #5b5b5b;
+    width: 100px;
+    height: auto;
+    opacity: 0.2;
+  }
+}

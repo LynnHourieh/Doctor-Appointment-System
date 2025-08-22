@@ -1,0 +1,15 @@
+.tag-ctr {
+  border-radius: 5px;
+  width: fit-content;
+  padding: 0px 5px;
+}
+
+.tag-ctr > p {
+  text-transform: uppercase;
+  font-family: inherit !important;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+  font-size: 13px;
+  color: inherit !important;
+}

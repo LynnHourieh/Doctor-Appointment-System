@@ -1,0 +1,39 @@
+@import "../../theme.scss";
+
+.inputGroup-root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 540px;
+
+  .inputGroup-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .inputGroup-title {
+      font-size: 0.825rem;
+      font-weight: 500;
+      color: $primary;
+      margin: 0;
+      line-height: normal;
+    }
+
+    p.inputGroup-info {
+      max-width: 540px;
+      margin: 0;
+      font-size: 0.8125rem;
+      color: $text-secondary;
+    }
+  }
+
+  .inputGroup-elements {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .inputField-labelWrapper label {
+    font-weight: 400 !important;
+  }
+}

@@ -1,0 +1,65 @@
+// Global colors
+
+$primary: #2D84F7;           // Main blue (your provided color)
+$primary-dark: #1A5FC4;      // Darker shade
+$secondary: #4DADF7;         // Lighter secondary blue
+$secondary-light: #9BD4FE;   // Very light blue
+$secondary-dark: #176BB5;    // Dark secondary blue
+
+$red: #ff0606;
+$red-dark: #bf0505;
+$red-light: #ff9292;
+
+// Text colors
+
+$text-secondary: #5b5b5b;
+$text-primary: #131339;
+$text-placeholder: #868686;
+$text-disabled: #878787;
+$text-meta: #626262;
+
+// Button colors
+
+$btn-disabled: #ededed;
+
+// Background colors
+
+$primary-bg: #fff;
+$secondary-bg: #fefefe;
+$error-bg: #fff8f8;
+$light-bg: #f9f9f9;
+
+// Border colors
+
+$border-field: #ddd;
+$border-default: #aeaeae26;
+
+// Border styling
+
+$border-radius: 6px;
+
+// Global spacing
+
+$vertical-gap: 12px;
+
+// Padding
+
+$default-padding: 1.9rem;
+$padding-xsm: 0.8rem;
+$padding-sm: 1.1rem;
+$padding-md: 1.5rem;
+$padding-lg: 1.9rem;
+
+// Font size
+
+$font-size-lg: 1.5rem;
+
+// Shadows
+
+$shadow-sm: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+$shadow-md:
+  rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+  rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+$shadow-lg:
+  rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+  rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;

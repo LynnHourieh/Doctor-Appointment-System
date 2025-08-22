@@ -19,7 +19,7 @@ const loginUser = async (req, res) => {
         // Check user exists
         const user = await prisma.user.findUnique({
             where: { email },
-            include: { status: true }
+            include: { status: true, role: true } // Include status and role for further checks
         });
         if (!user) return res.status(401).json({ message: "Invalid credentials." });
 
@@ -45,23 +45,38 @@ const loginUser = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "2h" }
         );
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,            // Set true in production (requires HTTPS)
+            sameSite: "Strict",
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
 
         res.status(200).json({
             message: "Login successful",
             token,
             user: {
                 id: user.id,
+                fullName: user.fullName,
                 email: user.email,
-                roleId: user.roleId,
+                role: user.role.name,
+                status: user.status.name,
             },
+
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message || "Login error" });
     }
 };
+
 const logoutUser = (req, res) => {
-    // Invalidate the token on the client side
-    res.status(200).json({ message: "Logged out successfully. Please remove token on client." });
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "producation",
+        sameSite: "Lax",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+
 }
 export { loginUser, logoutUser };

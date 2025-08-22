@@ -1,0 +1,73 @@
+@import "../../theme.scss";
+
+.selectableChip {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $primary;
+  width: max-content;
+  min-width: 66px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.3s;
+  position: relative;
+
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  }
+
+  .selectableChip-iconContainer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 7px;
+    height: 4px;
+
+    svg {
+      width: 15px;
+      height: 15px;
+      fill: $secondary;
+      position: absolute;
+      right: -2px;
+      top: -5px;
+    }
+  }
+}
+
+.selectableChip-selected {
+  .selectableChip {
+    border-color: $secondary;
+    background-color: rgba($secondary, 0.04);
+    color: $primary;
+
+    &:hover {
+      box-shadow:
+        rgba(129, 52, 175, 0.1) 0px 1px 3px 0px,
+        rgba(129, 52, 175, 0.06) 0px 1px 2px 0px;
+    }
+  }
+}
+
+.selectableChip-disabled {
+  .selectableChip {
+    cursor: not-allowed;
+    background-color: #f8f8f8;
+    color: $text-disabled;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@import '../../theme.scss';
+
+.main-layout {
+ 
+  &.desktop {
+   
+    .desktop-container {
+      display: flex; //btw sidebar and page-content
+  
+
+      .page-content {
+        flex: 1; //will grow to fill all remaining space in the container
+        padding: $padding-lg;
+        
+      }
+    }
+
+  }
+ 
+
+  &.mobile {
+    display: flex;
+    flex-direction: column;
+
+
+    .page-content {
+      padding: $padding-lg;
+
+    }
+  }
+}

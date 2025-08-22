@@ -1,0 +1,86 @@
+@import "../../theme.scss";
+
+.admin-approval-container {
+    display: flex;
+    flex-direction: column;
+   
+    border-radius: $border-radius;
+
+
+    h1 {
+        margin: 0px;
+
+        color: #2D84F7;
+
+    }
+
+    p {
+
+        margin: 0px;
+    }
+
+
+     .admin-title {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+
+        .admin-line {
+            flex: 1;
+            height: 1px;
+            background-color: #ccc;
+        }
+    }
+    .admin-approval-card {
+
+        background: white;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: $border-radius;
+
+        .admin-approval-card-header {
+            display: flex;
+            justify-content: flex-start;
+            gap: 30px;
+            font-size: 20px;
+
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+
+            #admin-approval-button-filters {
+                color: $primary;
+                font-weight: bold;
+            }
+
+            .button-container {
+                .button-root {
+                    font-size: 20px;
+
+                    &:hover {
+                        background: transparent;
+                    }
+
+
+                }
+            }
+        }
+
+        .admin-approval-card-body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            .admin-approval-card-filter {
+                max-width: 220px;
+            }
+
+            .emptyState-root {
+                width: unset;
+            }
+        }
+
+    }
+
+}

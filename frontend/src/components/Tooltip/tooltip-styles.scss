@@ -1,0 +1,44 @@
+@import "../../theme.scss";
+
+#settings-page .tooltip-container {
+  position: relative;
+
+  .tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+
+    html[dir="rtl"] & {
+      left: unset;
+      right: 50%;
+    }
+
+    background-color: #f3f3f3;
+    color: $text-secondary;
+    border-radius: $border-radius;
+    padding: 5px 8px;
+    font-size: 12px;
+    white-space: normal;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
+    z-index: 9999;
+    box-shadow:
+      rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  }
+
+  span {
+    display: inline-block;
+  }
+
+  &:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+}

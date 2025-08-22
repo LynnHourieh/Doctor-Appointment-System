@@ -1,0 +1,85 @@
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.dashboard-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+
+    .dashboard-line {
+        flex: 1;
+        height: 1px;
+        background-color: #ccc;
+    }
+}
+
+.dashboard-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.dashboard-card {
+   
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px;
+    flex: 1 1 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    h3{
+        font-weight: 200;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        svg{
+            fill: #4DADF7;
+        }
+    }
+}
+.dashboard-card-value {
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+}
+.dashboard-appointments{
+    padding: 16px;
+    background-color: #ffff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin: 8px;
+    h3{
+        font-weight: 600;
+        margin: 0px;
+        padding:16px 0px ;
+        border-bottom: 1px solid #eee;
+    }
+    ul{
+        list-style: none;
+        padding: 0;
+        li{
+            padding: 8px 0;
+           
+        }
+    }
+}
+.dashboard-charts {
+    display: flex;
+   
+}
+.dashboard-chart-item {
+     background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px;
+    flex: 1 1 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ 
+}

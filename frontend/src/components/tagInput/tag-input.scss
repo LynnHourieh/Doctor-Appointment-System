@@ -1,0 +1,60 @@
+.tag-input {
+
+    display: flex;
+    flex-direction: column;
+ 
+
+    &__label {
+        display: block;
+        font-weight: 500;
+
+    }
+
+    &__tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+    }
+
+    &__tag {
+        background-color: #e0f2ff;
+        color: #0077b6;
+        padding: 0.25rem 0.5rem;
+        border-radius: 1rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+           margin-bottom: 10px;
+    margin-top: 10px;
+
+    }
+
+    &__remove {
+        background: none;
+        border: none;
+        font-weight: bold;
+        color: #ef4444;
+        cursor: pointer;
+    }
+
+    &__field,
+    &__select {
+        width: 248px;
+        height: 38px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        padding-inline: 10px 24px;
+    }
+
+    &__field {
+        &:focus-visible {
+            border-color: #0077b6;
+            outline: #0077b6;
+        }
+    }
+
+    &__select {
+        background-color: #fff;
+    }
+}

@@ -1,0 +1,211 @@
+@import "../../theme.scss";
+
+html[dir="rtl"] {
+  .inputField-inputWrapper {
+    &.inputField-hasConcatString {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+
+    input {
+      direction: ltr;
+    }
+  }
+}
+.inputField-root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  position: relative;
+  font-size: 0.875rem;
+
+  .inputField-labelWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .inputField-inputWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 540px;
+    display: flex;
+    align-items: center;
+
+    input {
+      border-radius: $border-radius;
+      border: 1px solid $border-field;
+      background: $secondary-bg;
+      height: 42px;
+      max-width: 540px;
+      flex-grow: 1;
+      padding-inline: 10px;
+      font-size: inherit;
+      min-height: unset;
+      margin: 0;
+
+      &:hover {
+        border-color: $secondary;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 1px $secondary-light;
+        border-color: $secondary;
+      }
+
+      &::placeholder {
+        font-size: 0.8rem;
+        color: $text-placeholder;
+      }
+
+      &.inputField-isPassword {
+        padding-inline-end: 44px;
+      }
+
+      &.inputField-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+    }
+
+    &.inputField-hasError {
+      input {
+        border: 1px solid $red-light;
+        background: $error-bg;
+
+        &:hover {
+          border-color: $red-light;
+        }
+
+        &:focus {
+          box-shadow: 0 0 0 1px $red-light;
+        }
+      }
+    }
+
+    &.inputField-hasConcatString {
+      border-radius: $border-radius;
+      border: 1px solid $border-field;
+      background: $secondary-bg;
+      overflow: hidden;
+
+      .inputField-concatString {
+        direction: ltr;
+        white-space: nowrap;
+        color: $text-secondary;
+        font-weight: 500;
+        padding-inline: 10px;
+        border-right: 1px solid $border-field;
+        height: 42px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #f9f9f9;
+      }
+
+      &:hover {
+        border-color: $secondary;
+      }
+
+      &:focus-within {
+        box-shadow: 0 0 0 1px $secondary-light;
+        border-color: $secondary;
+      }
+
+      &.inputField-hasError {
+        border: 1px solid $red-light;
+        background: $error-bg;
+
+        &:hover {
+          border-color: $red-light;
+        }
+
+        &:focus {
+          box-shadow: 0 0 0 1px $red-light;
+        }
+
+        &:focus-within {
+          box-shadow: 0 0 0 1px $red-light;
+          border-color: $red;
+        }
+      }
+
+      input {
+        border: none;
+
+        &:focus {
+          box-shadow: none;
+        }
+      }
+    }
+
+    button {
+      all: unset;
+      position: absolute;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      html[dir="rtl"] & {
+        right: unset;
+        left: 10px;
+      }
+
+      svg {
+        fill: currentColor;
+      }
+    }
+  }
+
+  &.inputField-rowLayout {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: 540px;
+    flex: 1;
+
+    label {
+      width: 140px;
+    }
+
+    .inputField-inputWrapper {
+      width: unset;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .inputField-errorMessage {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $red;
+    font-size: 0.775rem;
+    position: absolute;
+    bottom: 0;
+    transform: translateY(110%);
+
+    p {
+      margin: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    svg {
+      fill: currentColor;
+      height: 1.2em;
+      width: 1.2em;
+    }
+  }
+}

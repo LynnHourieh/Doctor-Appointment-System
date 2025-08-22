@@ -1,0 +1,225 @@
+@import "../../theme.scss";
+
+.CustomizableCard-cardContainer {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 600px;
+  min-height: 110px;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-family: inherit !important;
+  gap: 25px;
+
+  a {
+    text-decoration: none;
+    color: #1a0dab;
+    cursor: pointer;
+    display: block;
+    outline: 0;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  &:hover {
+    .CustomizableCard-hoverContainer {
+      transform: translate(-50%, 0);
+    }
+
+    &.CustomizableCard-cardContainer--withActions
+      .CustomizableCard-hoverBackground {
+      display: block;
+    }
+  }
+}
+
+.CustomizableCard-cardContainer--withActions a {
+  pointer-events: none;
+}
+
+.CustomizableCard-hoverBackground {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-color: #ffffff44;
+  z-index: 7;
+}
+
+.CustomizableCard-dimmedOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: #ffffff87;
+  z-index: 7;
+}
+
+.CustomizableCard-tagsContainer {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .CustomizableCard-tagSeparator {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: black;
+  }
+}
+
+html:dir(ltr) {
+  .CustomizableCard-cardContainer--rtl {
+    flex-direction: row-reverse;
+    .CustomizableCard-cardBodyContainer {
+      .CustomizableCard-title {
+        display: inline-block;
+        direction: rtl;
+      }
+      .CustomizableCard-category-type-container {
+        flex-direction: row;
+      }
+    }
+    .CustomizableCard-category-type-container {
+      justify-content: flex-end;
+    }
+    .CustomizableCard-tagsContainer {
+      justify-content: flex-end;
+    }
+  }
+}
+
+.CustomizableCard-cardContainer--rtl {
+  .CustomizableCard-cardBodyContainer {
+    text-align: right;
+
+    .CustomizableCard-title {
+      display: inline-block;
+      direction: rtl;
+    }
+  }
+
+  .CustomizableCard-bodySeparator,
+  .CustomizableCard-date {
+    margin-left: 5px;
+    margin-right: 0px !important;
+  }
+}
+
+.CustomizableCard-category {
+  width: max-content;
+}
+.CustomizableCard-category-type-container {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  .CustomizableCard-separator {
+    width: 0.1px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #aab7b8;
+  }
+}
+
+.CustomizableCard-body {
+  width: max-content;
+}
+
+.CustomizableCard-cardBodyContainer {
+  text-align: left;
+  line-height: 1.4;
+  font-size: 14px;
+
+  .CustomizableCard-date {
+    margin-right: 5px;
+  }
+
+  .CustomizableCard-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* Limit the title to 1 line */
+    -webkit-box-orient: vertical; /* Arrange the text vertically */
+    overflow: hidden;
+    max-width: max-content;
+    margin-bottom: 7px;
+  }
+}
+
+a.CustomizableCard-imageWrapper {
+  text-decoration: none;
+  display: block;
+  width: 90px;
+  height: 90px;
+  margin-left: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.CustomizableCard-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.CustomizableCard-bodySeparator {
+  margin-right: 5px;
+}
+
+.CustomizableCard-dateAndBody {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #4d5156;
+  line-height: 2;
+}
+
+.CustomizableCard-hoverContainer {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  border-radius: $border-radius;
+  overflow: hidden;
+  background-color: #fefefee6;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  transform: translate(-50%, 180%);
+  transition: transform 0.3s cubic-bezier(0.3, 0.85, 0.4, 0.95);
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.CustomizableCard-actionButtonsContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.CustomizableCard-score {
+  background-color: #d0e7c2;
+
+  .CustomizableCard-scoreLine {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      #d0e7c2 0%,
+      #6fb545 50%,
+      #d0e7c2 100%
+    );
+  }
+
+  .CustomizableCard-scoreText {
+    padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #5e9c3b;
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+}

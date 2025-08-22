@@ -1,0 +1,106 @@
+@import "../../theme.scss";
+
+.sidebar {
+  width: 250px;
+  background-color: $secondary;
+  color: white;
+ min-height: 100vh; 
+
+  padding: 1rem;
+  transition: width 0.3s ease;
+
+  &.collapsed {
+    width: 60px;
+
+    .sidebar-header h2 {
+      font-size: 1.2rem;
+    }
+
+    .nav-list li {
+      font-size: 0;
+      overflow: hidden;
+    
+
+    }
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+
+    li {
+      margin: 1rem 0;
+      cursor: pointer;
+      transition: font-size 0.3s ease;
+       a{
+      text-decoration: none;
+      color: white;
+     }
+      &:hover {
+        font-size: 1.2rem;
+       
+      
+      }
+    }
+  }
+}
+
+.mobile-navbar {
+  display: flex;
+  align-items: center;
+  background-color: $secondary;
+  color: white;
+  padding: 1rem;
+
+  .menu-icon {
+    cursor: pointer;
+    svg {
+      fill: white;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .mobile-dropdown {
+    z-index: 2;
+    position: absolute;
+    top: 50px;
+    margin: 0;
+    left: 0;
+    background-color: $secondary;
+    width: 100%;
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 1rem;
+      cursor: pointer;
+       a{
+      text-decoration: none;
+      color: white;
+     }
+       &:hover {
+        font-size: 1.2rem;
+       
+      
+      }
+    }
+  }
+}

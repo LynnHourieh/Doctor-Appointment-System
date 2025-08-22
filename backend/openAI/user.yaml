@@ -21,12 +21,12 @@ paths:
             schema:
               type: object
               required:
-                - full_name
+                - fullName
                 - email
                 - password
                 - roleId
               properties:
-                full_name:
+                fullName:
                   type: string
                   example: "Lynn Hourieh"
                 email:

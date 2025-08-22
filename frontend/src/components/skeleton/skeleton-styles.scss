@@ -1,0 +1,19 @@
+.skeleton-root {
+  display: block;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  animation: shimmer-loading 2s ease-in-out 0.5s infinite;
+  border-radius: 5px;
+}
+
+@keyframes shimmer-loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}

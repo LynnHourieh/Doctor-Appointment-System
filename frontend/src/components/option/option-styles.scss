@@ -1,0 +1,101 @@
+@import "../../theme.scss";
+
+.option-root {
+  width: 100%;
+  list-style: none;
+  padding: 12px 8px;
+  border-radius: $border-radius;
+  cursor: default;
+  margin: 0;
+  font-size: 0.875rem;
+  color: $primary;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+
+  label {
+    font-weight: 400 !important;
+    font-size: inherit !important;
+  }
+
+  &.option-selected {
+    background-color: rgba(174, 174, 174, 0.11);
+    color: $secondary;
+
+    &.option-hasCheckbox {
+      background-color: unset;
+
+      &:hover {
+        background: rgba(174, 174, 174, 0.16);
+      }
+    }
+  }
+
+  &:hover {
+    background: rgba(174, 174, 174, 0.16);
+
+    .option-meta a {
+      display: block;
+    }
+  }
+
+  &.option-destructive {
+    color: $red;
+  }
+
+  .option-checkedIcon {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    margin-inline-end: 4px;
+  }
+  .option-icon {
+    svg {
+      width: 12px !important;
+      height: 12px !important;
+    }
+  }
+
+  .option-textWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+    align-items: center;
+
+    svg {
+      width: 0.9rem;
+      height: 100%;
+      fill: currentColor;
+    }
+  }
+
+  .option-meta {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    p {
+      color: $text-secondary;
+      margin: 0;
+      font-size: 0.75rem;
+      line-height: normal;
+    }
+
+    a {
+      text-decoration: none;
+      display: none;
+      margin-left: auto;
+      padding-right: 4px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+}
