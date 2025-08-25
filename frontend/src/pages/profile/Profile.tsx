@@ -14,7 +14,7 @@ import { EditIcon, profileIcon } from "../../assets/images/icons";
 const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const { specialties, loading } = useSpecialties();
-    console.log(specialties, loading);
+   
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
