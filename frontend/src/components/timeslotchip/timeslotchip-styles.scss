@@ -1,0 +1,27 @@
+.tsc-chip {
+
+    background: #FFFF;
+
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font: 500;
+    cursor: pointer;
+}
+
+.tsc-chip:hover:not(:disabled) {
+    background-color: #ddd;
+}
+
+.tsc-chip--selected {
+    background: #4DADF7;
+    color: #FFFF;
+    border-color: #DDD;
+}
+
+.tsc-chip:disabled {
+    background: #f9fafb;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+}
