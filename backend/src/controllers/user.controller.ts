@@ -1,8 +1,6 @@
-import { getStatusByName } from "../services/status.service.js";
 import { createUser } from "../services/user.service.js";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-
 
 
 const registerUser = async (req, res) => {
@@ -33,12 +31,6 @@ const registerUser = async (req, res) => {
 
     if (!fullName || !email || !password || !roleId || !gender || !dateOfBirth) {
       return res.status(400).json({ message: "All fields are required." });
-    }
-
-    const statusName = roleId === 1 ? "approved" : "pending";
-    const status = await getStatusByName(statusName);
-    if (!status) {
-      return res.status(500).json({ message: `Status '${statusName}' not found.` });
     }
 
     const doctorData =
@@ -74,7 +66,7 @@ const registerUser = async (req, res) => {
       email,
       password,
       roleId,
-      statusId: status.id,
+      status: "PENDING",
       gender,
       dateOfBirth,
       doctorData,
@@ -119,9 +111,9 @@ const getUserProfile = async (req, res) => {
     // Add role-specific info conditionally
     let responseData: any = { ...baseUser };
 
-    if (user.roleId === 2) {
+    if (user.role == "DOCTOR") {
       responseData.doctor = doctor;
-    } else if (user.roleId === 3) {
+    } else if (user.role == "PATIENT") {
       responseData.patient = patient;
     }
     res.json(responseData);
@@ -170,7 +162,7 @@ const updateUserProfile = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
-    if (user.roleId === 2) {
+    if (user.role == "DOCTOR") {
       // Doctor role
       await prisma.doctor.upsert({
         where: { id: userId }, // use id instead of userId
@@ -198,7 +190,7 @@ const updateUserProfile = async (req, res) => {
           is_active,
         },
       });
-    } else if (user.roleId === 3) {
+    } else if (user.role === "PATIENT") {
       // Patient role
       await prisma.patient.upsert({
         where: { id: userId }, // use id instead of userId
@@ -235,16 +227,14 @@ const getAllPatients = async (req, res) => {
   try {
     const patients = await prisma.user.findMany({
       where: {
-        roleId: 3, // patient role
-        statusId: 2, // only approved patients
+        role: "PATIENT",
+        status: "ACCEPTED", 
       },
       include: {
         patient: true,
-        status: true,
-        role: true,
       },
       orderBy: {
-        created_at: 'desc',
+        createdAt: 'desc',
       },
     });
 
@@ -261,6 +251,7 @@ const getAllPatients = async (req, res) => {
 };
 
 const getPatientById = async (req, res) => {
+
   try {
     const patientId = req.params.id;
 
@@ -268,8 +259,6 @@ const getPatientById = async (req, res) => {
       where: { id: patientId.toString() },
       include: {
         patient: true,
-        status: true,
-        role: true,
       },
     });
 
@@ -290,16 +279,15 @@ const getAllDoctors = async (req, res) => {
   try {
     const doctors = await prisma.user.findMany({
       where: {
-        roleId: 2, // doctor role
-        statusId: 2,
+        role: "DOCTOR", 
+        status: "ACCEPTED",
       },
       include: {
         doctor: true,
-        status: true,
-        role: true,
+       
       },
       orderBy: {
-        created_at: 'desc',
+        createdAt: 'desc',
       },
     });
 
@@ -323,8 +311,6 @@ const getDoctorById = async (req, res) => {
       where: { id: doctorId.toString() },
       include: {
         patient: true,
-        status: true,
-        role: true,
       },
     });
 
@@ -381,7 +367,7 @@ const updateProfile = async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
-    if (user.roleId === 2) {
+    if (user.role === "DOCTOR") {
       // Doctor role
       await prisma.doctor.upsert({
         where: { id: userId }, // use id instead of userId
@@ -409,7 +395,7 @@ const updateProfile = async (req, res) => {
           is_active,
         },
       });
-    } else if (user.roleId === 3) {
+    } else if (user.role === "PATIENT") {
       // Patient role
       await prisma.patient.upsert({
         where: { id: userId }, // use id instead of userId

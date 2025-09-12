@@ -3,21 +3,21 @@ export interface BaseUser {
     fullName: string;
     email: string;
     password?: string;
-    roleId: number;
+    role: string;
     statusId?: number;
     created_at?: string;
     dateOfBirth: string;
-    gender: 'male' | 'female';
+    gender: 'MALE' | 'FEMALE';
 }
 
 export interface DoctorInfo extends BaseUser {
-    role: 'doctor'; // discriminator
+    role: 'DOCTOR'; // discriminator
     bio: string;
     phone: string;
     license_number: string;
     experience_years: number;
     education: string;
-    languages: string;
+    languages: string[];
     photo_url: string;
     clinic_name: string;
     location: string;
@@ -27,7 +27,7 @@ export interface DoctorInfo extends BaseUser {
 }
 
 export interface PatientInfo extends BaseUser {
-    role: 'patient'; // discriminator
+    role: 'PATIENT'; // discriminator
     phone: string;
     address: string;
     known_conditions: string[];
@@ -39,7 +39,7 @@ export interface PatientInfo extends BaseUser {
 }
 
 export interface AdminProps extends BaseUser {
-    role: 'admin';
+    role: 'ADMIN';
 }
 
 export type UserInfo = DoctorInfo | PatientInfo | AdminProps;

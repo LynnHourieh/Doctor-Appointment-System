@@ -15,8 +15,12 @@ export const authenticateToken = (req, res, next) => {
 };
 
 export const isAdmin = (req, res, next) => {
-  if (req.user?.roleId !== 1) {
-    return res.status(403).json({ message: "Admins only" });
+  // ensure the auth middleware has set req.user (from your JWT)
+  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+
+  // role is an enum string now: 'ADMIN' | 'DOCTOR' | 'PATIENT'
+  if (req.user.role !== 'ADMIN') {
+    return res.status(403).json({ message: 'Admins only' });
   }
   next();
 };

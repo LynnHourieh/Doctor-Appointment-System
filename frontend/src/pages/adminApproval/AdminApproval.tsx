@@ -19,7 +19,7 @@ const AdminApproval = () => {
     const [selectedUser, setSelectedUser] = useState<any>(null);
 
     const filteredUsers = pendingUsers
-        .filter((user: any) => user.role.name === (activeTab === "doctors" ? "doctor" : "patient"))
+        .filter((user: any) => user.role === (activeTab === "doctors" ? "DOCTOR" : "PATIENT"))
         .filter((user: any) => {
             const search = searchTerm.toLowerCase();
             const name = user.fullName?.toLowerCase() || "";
@@ -33,7 +33,7 @@ const AdminApproval = () => {
             }
         });
 
-
+console.log("filteredUsers", filteredUsers);
     
 
     const baseUrl = import.meta.env.VITE_BASE_URL;

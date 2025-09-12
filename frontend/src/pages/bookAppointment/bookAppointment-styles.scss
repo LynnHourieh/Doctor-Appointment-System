@@ -1,21 +1,22 @@
 .book-appointment-title {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
 
-        .book-appointment-line {
-            flex: 1;
-            height: 1px;
-            background-color: #ccc;
-        }
+    .book-appointment-line {
+        flex: 1;
+        height: 1px;
+        background-color: #ccc;
     }
+}
+
 .book-appointment-container {
 
     display: grid;
     width: 100%;
     grid-template-columns:
-        minmax(260px, 1fr) minmax(420px, 2fr) minmax(260px, 1fr);
+        minmax(260px, 1fr) minmax(280px, 2fr) minmax(260px, 2fr);
 
 }
 
@@ -45,7 +46,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-   
+
     border-radius: 8px;
     padding: 0px 8px;
 
@@ -56,21 +57,36 @@
 }
 
 .book-appointment-doctor-card:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-appointment-doctor-card.is-selected {
     background-color: #4DADF7;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.book-appointment-notes{
+
+.book-appointment-notes {
     width: 210px;
     height: 210px;
     border-color: #dddd;
     border-radius: 8px;
 }
-.book-appointment-notes:focus{
+
+.book-appointment-notes:focus {
     outline: none;
     border-color: #4DADF7;
 }
-.button-container{
+
+.button-container {
     display: flex;
     justify-content: flex-end;
     margin-right: 5px;
+}
+
+.book-appointment-time-slots {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }

@@ -7,9 +7,9 @@ const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const baseUrl = import.meta.env.VITE_BASE_URL;
-  const isAdmin = localStorage.getItem("userRole") === "admin";
-  const isDoctor = localStorage.getItem("userRole") === "doctor";
-  const isPatient = localStorage.getItem("userRole") === "patient";
+  const isAdmin = localStorage.getItem("userRole") === "ADMIN";
+  const isDoctor = localStorage.getItem("userRole") === "DOCTOR";
+  const isPatient = localStorage.getItem("userRole") === "PATIENT";
   const navigate = useNavigate();
 
   const navItems = [

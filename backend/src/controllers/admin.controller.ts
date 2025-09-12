@@ -1,46 +1,51 @@
 import { PrismaClient } from "@prisma/client";
 import { sendEmail } from "../utils/sendEmail";
+import { AccountStatus,Role } from '@prisma/client'
+import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
-export const getPendingUsers = async (req, res) => {
+
+export const getPendingUsers = async (req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
-      where: {
-        status: {
-          name: "pending"
-        }
-      },
+      where: { status: AccountStatus.PENDING },
       select: {
         id: true,
         fullName: true,
         email: true,
-        role: { select: { name: true } },
+        role: true,          // enum scalar
         dateOfBirth: true,
-        created_at: true,
+        createdAt: true,     // not created_at
         gender: true,
         doctor: {
           select: {
-            specialty: {
-              select: { name: true }
-            }
+            specialty: { select: { name: true } }
           }
         }
-      }
-    });
+      },
+      orderBy: { createdAt: 'desc' }
+    })
 
-    // Clean response: attach specialty only if role is "doctor"
-    const formatted = users.map(user => ({
-      ...user,
-      specialty: user.role.name === "doctor" && user.doctor?.specialty
-        ? user.doctor.specialty.name
+    const formatted = users.map(u => ({
+      id: u.id,
+      fullName: u.fullName,
+      email: u.email,
+      role: u.role,                                  // 'ADMIN' | 'DOCTOR' | 'PATIENT'
+      status: AccountStatus.PENDING,                 // we filtered by PENDING
+      dateOfBirth: u.dateOfBirth,
+      createdAt: u.createdAt,
+      gender: u.gender,
+      specialty: u.role === Role.DOCTOR
+        ? u.doctor?.specialty?.name ?? null
         : null
-    }));
+    }))
 
-    res.json(formatted);
+    res.json(formatted)
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch pending users" });
+    console.error(error)
+    res.status(500).json({ message: 'Failed to fetch pending users' })
   }
-};
+}
 
 export const updateUserStatus = async (req, res) => {
   const { id } = req.params;
@@ -50,18 +55,12 @@ export const updateUserStatus = async (req, res) => {
     return res.status(400).json({ message: "Invalid action" });
   }
 
-  const newStatus = action === "accept" ? "approved" : "rejected";
+  const newStatus = action === "accept" ? AccountStatus.ACCEPTED : AccountStatus.DECLINED;
 
   try {
-    const status = await prisma.status.findUnique({ where: { name: newStatus } });
-    if (!status) {
-      return res.status(500).json({ message: `Status '${newStatus}' not found in DB.` });
-    }
-
     const user = await prisma.user.update({
       where: { id: id },
-      data: { statusId: status.id },
-      include: { status: true }
+      data: { status: newStatus },
     });
     const subject =
       action === "accept"

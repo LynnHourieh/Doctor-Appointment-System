@@ -1,9 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// ---------- Generator & Datasource ----------
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,105 +8,141 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[] // <- This line shows: One Role ➡️ Many Users
+// ---------- Enums ----------
+enum Role {
+  ADMIN
+  DOCTOR
+  PATIENT
 }
 
-model Status {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
+enum AccountStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  RESCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+// ---------- Models ----------
 model User {
-  id            String   @id @default(uuid())
-  fullName     String
-  email         String   @unique
-  gender        String
-  password      String
- dateOfBirth    String
+  id          String        @id @default(uuid())
+  fullName    String
+  email       String        @unique
+  gender      Gender?
+  password    String
+  dateOfBirth DateTime
+  role        Role          @default(PATIENT)
+  status      AccountStatus @default(PENDING)
 
-  role          Role     @relation(fields: [roleId], references: [id])
-  roleId        Int
-  status        Status   @relation(fields: [statusId], references: [id])
-  statusId      Int
-  created_at    DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
-  doctor        Doctor?
-  patient       Patient?
-  notifications Notification[]
+  doctor  Doctor?
+  patient Patient?
+
+  @@index([createdAt])
 }
 
 model Specialty {
   id      Int      @id @default(autoincrement())
   name    String   @unique
-  doctors Doctor[] // One specialty to many doctors
+  doctors Doctor[]
 }
 
 model Doctor {
-  id               String   @id @default(uuid())
-  user             User     @relation(fields: [id], references: [id])
+  // Shared PK with User (strict 1–1)
+  id   String @id
+  user User   @relation(fields: [id], references: [id], onDelete: Cascade)
+
   bio              String?
   phone            String?
-  license_number   String?
+  license_number   String?  @unique
   experience_years Int?
   education        String?
-  languages        String?
+  languages        String[] @default([]) // Postgres text[]
   photo_url        String?
   clinic_name      String?
   location         String?
   is_active        Boolean  @default(true)
-  schedules        Schedule[]
-  appointments     Appointment[]
+
   specialtyId Int
-  specialty   Specialty @relation(fields: [specialtyId], references: [id])
+  specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Restrict)
+
+  appointments Appointment[]
+
+  createdAt          DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime             @updatedAt @db.Timestamptz(6)
+  DoctorAvailability DoctorAvailability[]
+
+  @@index([specialtyId])
+}
+
+model DoctorAvailability {
+  id       String @id @default(uuid())
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  // 0=Sunday, 1=Monday, ..., 6=Saturday
+  dayOfWeek Int
+
+  // Minutes since midnight (e.g., 08:00 → 480, 12:00 → 720)
+  startTime String
+  endTime   String
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([doctorId, dayOfWeek])
+  @@map("DoctorAvailability")
 }
 
 model Patient {
-  id               String   @id @default(uuid())
-  user             User     @relation(fields: [id], references: [id])
+  // Shared PK with User (strict 1–1)
+  id   String @id
+  user User   @relation(fields: [id], references: [id], onDelete: Cascade)
+
   phone            String?
   address          String?
-  known_conditions String[]
-  allergies        String[]
+  known_conditions String[] @default([])
+  allergies        String[] @default([])
   blood_type       String?
   weight_kg        Float?
   height_cm        Float?
-  appointments     Appointment[]
-}
-
-model Schedule {
-  id          String   @id @default(uuid())
-  doctor      Doctor   @relation(fields: [doctorId], references: [id])
-  doctorId    String
-  day_of_week Int
-  start_time  DateTime
-  end_time    DateTime
 
   appointments Appointment[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 }
 
 model Appointment {
-  id              String     @id @default(uuid())
-  doctor          Doctor     @relation(fields: [doctorId], references: [id])
-  doctorId        String
-  patient         Patient    @relation(fields: [patientId], references: [id])
-  patientId       String
-  schedule        Schedule?  @relation(fields: [scheduleId], references: [id])
-  scheduleId      String?
-  appointment_date DateTime
-  status          String     @default("pending") // Could use enum
-  reason          String?
-  created_at      DateTime   @default(now())
-}
+  id String @id @default(uuid())
 
-model Notification {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  message   String
-  type      String // e.g. 'email', 'sms'
-  sent_at   DateTime @default(now())
+  doctorId  String
+  patientId String
+  doctor    Doctor  @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Restrict)
+
+  startAt DateTime          @db.Timestamptz(6)
+  status  AppointmentStatus @default(PENDING)
+  reason  String?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@unique([doctorId, startAt]) // block exact same slot for same doctor
+  @@index([doctorId, startAt])
+  @@index([patientId, startAt])
 }

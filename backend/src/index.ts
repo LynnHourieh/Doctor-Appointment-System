@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import specialtyRoutes from "./routes/specilities.routes.js";
+import appointmentRoutes from "./routes/appointment.routes.js"; 
+import availabilityRoutes from "./routes/availability.routes.js";
 dotenv.config();
 
 const app = express();
@@ -19,7 +21,8 @@ app.use(cookieParser());
 app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);
 app.use("/specialties", specialtyRoutes);
-
+app.use("/appointments", appointmentRoutes);
+app.use("/availability", availabilityRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

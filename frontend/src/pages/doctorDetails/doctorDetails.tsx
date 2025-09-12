@@ -15,12 +15,12 @@ import "./doctor-details-styles.scss";
 
 const DoctorDetails = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const { specialties, loading } = useSpecialties();
+    const { specialties } = useSpecialties();
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { id } = useParams();
-    const isAdmin = localStorage.getItem("userRole") === "admin";
+    const isAdmin = localStorage.getItem("userRole") === "ADMIN";
     const currentUserId = localStorage.getItem("userId");
 
 
@@ -35,6 +35,12 @@ const DoctorDetails = () => {
         { text: "O-", value: "O-" },
     ];
 
+    const languageOptions = [
+        { text: "Arabic", value: "arabic" },
+        { text: "English", value: "english" },
+        { text: "French", value: "french" },
+        { text: "Spanish", value: "spanish" },
+    ];
 
     const [conditions, setConditions] = useState<string[]>([]);
     const [allergies, setAllergies] = useState<string[]>([]);
@@ -45,9 +51,11 @@ const DoctorDetails = () => {
         license_number: doctor.license_number || "",
         experience_years: doctor.experience_years || 0,
         education: doctor.education || "",
-        languages:
-            doctor.languages
-            || "",
+        languages: Array.isArray(doctor.languages)
+            ? doctor.languages.filter((l): l is string => typeof l === "string")
+            : typeof doctor.languages === "string"
+                ? [doctor.languages]
+                : [],
         photo_url: doctor.photo_url || "",
         clinic_name: doctor.clinic_name || "",
         location: doctor.location || "",
@@ -118,7 +126,6 @@ const DoctorDetails = () => {
             try {
                 //fetch doctor info
                 const data = await getdoctorInfo();
-                console.log("data", data)
 
                 const {
                     id,
@@ -126,12 +133,11 @@ const DoctorDetails = () => {
                     email,
                     dateOfBirth,
                     gender,
-                    roleId,
+                    role,
                     patient,
                     doctor
                 } = data;
 
-                const role = roleId === 1 ? "admin" : roleId === 2 ? "doctor" : "patient";
 
                 // Default user info
                 const baseInfo = {
@@ -144,35 +150,32 @@ const DoctorDetails = () => {
                 };
 
 
-                if (role === "doctor") {
+                if (role === "DOCTOR") {
                     const additionalInfo = getDoctorInfo({
                         ...doctor,
-                        role: "doctor"
+                        role: "DOCTOR"
                     });
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
-                        role: "doctor",
-                        roleId: roleId,
+                        role: "DOCTOR",
+                       
 
                     });
-                } else if (role === "patient") {
-                    const additionalInfo = getPatientInfo({ ...patient, role: "patient", roleId: roleId });
+                } else if (role === "PATIENT") {
+                    const additionalInfo = getPatientInfo({ ...patient, role: "PATIENT" });
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
-                        role: "patient",
-                        roleId: roleId,
-
+                        role: "PATIENT",
                     });
-                    setConditions(additionalInfo.known_conditions)
-                    setAllergies(additionalInfo.allergies)
-                } else if (role === "admin") {
+                    setConditions(additionalInfo.known_conditions);
+                    setAllergies(additionalInfo.allergies);
+                } else if (role === "ADMIN") {
                     // Admin 
                     setUserInfo({
                         ...baseInfo,
-                        role: "admin",
-                        roleId: roleId,
+                        role: "ADMIN",
                         statusId: data.statusId ?? 0,
                     });
                 }
@@ -188,11 +191,11 @@ const DoctorDetails = () => {
     const handleInputChange = (name: string, value: string) => {
         setUserInfo(prev => prev && { ...prev, [name]: value })
     }
-
+console.log(userInfo);
     return (
         <div className="doctor-container">
             <div className="doctor-title">
-                <h2 className="doctor-title-text">Our doctor Page</h2>
+                <h2 className="doctor-title-text">Our Doctor Page</h2>
                 <div className="doctor-line"></div>
             </div>
             <div className="doctor-cards">
@@ -273,8 +276,8 @@ const DoctorDetails = () => {
                                 <Select
                                     name="gender"
                                     options={[
-                                        { text: "Male", value: "male" },
-                                        { text: "Female", value: "female" }
+                                        { text: "Male", value: "MALE" },
+                                        { text: "Female", value: "FEMALE" }
                                     ]}
                                     value={userInfo?.gender || ""}
                                     onChange={(name, value) => handleInputChange(name, value)}
@@ -292,7 +295,7 @@ const DoctorDetails = () => {
 
                     <hr />
                     <div className="doctor-info">
-                        {userInfo?.role === "doctor" ? (
+                        {userInfo?.role === "DOCTOR" ? (
 
                             <>
                                 <div>
@@ -328,7 +331,7 @@ const DoctorDetails = () => {
                                     {isEditing ? (
                                         <InputField
                                             type="text"
-                                            name="licenseNumber"
+                                            name="license_number"
                                             value={userInfo?.license_number || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
                                             placeholder="Enter license number"
@@ -351,26 +354,39 @@ const DoctorDetails = () => {
                                         <p>{userInfo.education || "-"}</p>
                                     )}
                                 </div>
-                                <div>
+                                {/* <div>
                                     <label>Languages</label>
                                     {isEditing ? (
-                                        <InputField
-                                            type="text"
+                                        <Select
                                             name="languages"
-                                            value={userInfo.languages || ""}
-                                            onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
+                                            options={languageOptions}
+                                            value={
+                                                Array.isArray(userInfo?.languages)
+                                                    ? userInfo.languages[0] || ""
+                                                    : userInfo?.languages || ""
+                                            }
+                                            onChange={(name, value) =>
+                                                setUserInfo({
+                                                    ...userInfo,
+                                                    [name]: [value], // always store as array
+                                                })
+                                            }
                                             placeholder="Enter languages"
                                         />
                                     ) : (
-                                        <p>{userInfo.languages || "-"}</p>
+                                        <p>
+                                            {Array.isArray(userInfo.languages)
+                                                ? userInfo.languages.join(", ")
+                                                : userInfo.languages || "-"}
+                                        </p>
                                     )}
-                                </div>
+                                </div> */}
                                 <div>
                                     <label>Clinic Name</label>
                                     {isEditing ? (
                                         <InputField
                                             type="text"
-                                            name="clinicName"
+                                            name="clinic_name"
                                             value={userInfo?.clinic_name || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
                                             placeholder="Enter clinic name"
@@ -413,7 +429,7 @@ const DoctorDetails = () => {
                                     <label>Active</label>
                                     {isEditing ? (
                                         <Select
-                                            name="isActive"
+                                            name="is_active"
                                             options={[
                                                 { text: "Yes", value: "true" },
                                                 { text: "No", value: "false" },
@@ -427,7 +443,7 @@ const DoctorDetails = () => {
                                     )}
                                 </div>
                             </>
-                        ) : userInfo?.role === "patient" ? (
+                        ) : userInfo?.role === "PATIENT" ? (
                             // patient Info
                             <>
 

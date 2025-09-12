@@ -179,3 +179,11 @@ export interface InfiniteScrollProps {
   itemsToShow: number;
   renderItem: (item: InfiniteScrollItem) => React.ReactNode;
 }
+
+
+export interface TimeSlotChipProps {
+  label?: string;
+  selected?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+}

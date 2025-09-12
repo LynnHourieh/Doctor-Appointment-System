@@ -7,14 +7,15 @@ import Select from "../../components/select/Select";
 import type { DoctorInfo, GetProfileResponse, PatientInfo, UserInfo } from "../../models/user.types";
 import TagInput from "../../components/tagInput/TagInput";
 import { useSpecialties } from "../../hooks/useSpecialties";
-import { EditIcon, profileIcon } from "../../assets/images/icons";
+import { EditIcon } from "../../assets/images/icons";
+import { toInputDate } from "../../utils/constants";
 
 
 
 const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const { specialties, loading } = useSpecialties();
-   
+    const { specialties } = useSpecialties();
+
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,7 +34,7 @@ const Profile = () => {
 
     const [conditions, setConditions] = useState<string[]>([]);
     const [allergies, setAllergies] = useState<string[]>([]);
-    console.log(userInfo)
+
     const getDoctorInfo = (doctor: Partial<DoctorInfo>) => ({
         phone: doctor.phone || "",
         bio: doctor.bio || "",
@@ -114,19 +115,16 @@ const Profile = () => {
             try {
                 //fetch profile info
                 const data = await getProfileInfo();
-
                 const {
                     id,
                     fullName,
                     email,
                     dateOfBirth,
                     gender,
-                    roleId,
                     doctor,
-                    patient
+                    patient,
+                    role
                 } = data;
-
-                const role = roleId === 1 ? "admin" : roleId === 2 ? "doctor" : "patient";
 
                 // Default user info
                 const baseInfo = {
@@ -139,36 +137,29 @@ const Profile = () => {
                 };
 
 
-                if (role === "doctor") {
+                if (role === "DOCTOR") {
                     const additionalInfo = getDoctorInfo({
                         ...doctor,
-                        role: "doctor"
+
                     });
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
-                        role: "doctor",
-                        roleId: roleId,
-
+                        role: "DOCTOR",
                     });
-                } else if (role === "patient") {
-                    const additionalInfo = getPatientInfo({ ...patient, role: "patient", roleId: roleId });
+                } else if (role === "PATIENT") {
+                    const additionalInfo = getPatientInfo({ ...patient });
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
-                        role: "patient",
-                        roleId: roleId,
-
+                        role: "PATIENT"
                     });
                     setConditions(additionalInfo.known_conditions)
                     setAllergies(additionalInfo.allergies)
-                } else if (role === "admin") {
-                    // Admin 
+                } else if (role === "ADMIN") {
                     setUserInfo({
                         ...baseInfo,
-                        role: "admin",
-                        roleId: roleId,
-                        statusId: data.statusId ?? 0,
+                        role: "ADMIN",
                     });
                 }
 
@@ -181,6 +172,11 @@ const Profile = () => {
     }, []);
 
     const handleInputChange = (name: string, value: string) => {
+        if (name === "dateOfBirth") {
+            const isoDOB = new Date(value + "T00:00:00Z").toISOString();
+            setUserInfo(prev => prev && { ...prev, [name]: isoDOB });
+            return;
+        }
         setUserInfo(prev => prev && { ...prev, [name]: value })
     }
 
@@ -194,7 +190,7 @@ const Profile = () => {
                 <div className="profile-header">
                     <div className="profile-header-info">
                         <div className="profile-avatar-wrapper">
-                            <div className={isEditing ? `profile-avatar-icons`: ""}>
+                            <div className={isEditing ? `profile-avatar-icons` : ""}>
                                 <Avatar src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8" />
                                 {isEditing && <div className="profile-icons-overlay">
                                     <Button icon={EditIcon} onClickHandler={() => { }} collapse variant="tertiary" />
@@ -218,7 +214,7 @@ const Profile = () => {
                     <hr />
                     <div className="profile-info">
                         <div >
-                         <label>Full Name</label>
+                            <label>Full Name</label>
                             {isEditing ? (
                                 <InputField
                                     type="text"
@@ -250,7 +246,7 @@ const Profile = () => {
                                 <InputField
                                     type="date"
                                     name="dateOfBirth"
-                                    value={userInfo?.dateOfBirth || ""}
+                                    value={toInputDate(userInfo?.dateOfBirth)}
                                     onChange={(name, value) => handleInputChange(name, value)}
                                 />
                             ) : (
@@ -267,8 +263,8 @@ const Profile = () => {
                                 <Select
                                     name="gender"
                                     options={[
-                                        { text: "Male", value: "male" },
-                                        { text: "Female", value: "female" }
+                                        { text: "Male", value: "MALE" },
+                                        { text: "Female", value: "FEMALE" }
                                     ]}
                                     value={userInfo?.gender || ""}
                                     onChange={(name, value) => handleInputChange(name, value)}
@@ -286,7 +282,7 @@ const Profile = () => {
 
                     <hr />
                     <div className="profile-info">
-                        {userInfo?.role === "doctor" ? (
+                        {userInfo?.role === "DOCTOR" ? (
 
                             <>
                                 <div>
@@ -421,7 +417,7 @@ const Profile = () => {
                                     )}
                                 </div>
                             </>
-                        ) : userInfo?.role === "patient" ? (
+                        ) : userInfo?.role === "PATIENT" ? (
                             // Patient Info
                             <>
 
