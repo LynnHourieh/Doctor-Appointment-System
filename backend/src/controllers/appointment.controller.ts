@@ -21,7 +21,7 @@ const getAllAppointments = async (req, res) => {
 
 // GET /appointments/user/:id
 const getAppointmentsById = async (req, res) => {
-    const { id } = req.params; // this is doctorId OR patientId (same as user.id in your shared-PK setup)
+    const { id } = req.params; 
     try {
         const appointments = await prisma.appointment.findMany({
             where: {

@@ -40,4 +40,13 @@
     display: flex;
     
 }
+.appointment.status-confirmed {
+    color: green;
+    font-weight: bold;  
+}
+.appointment.status-rejected {
+    color: red;
+    font-weight: bold;  
+
+}
 }

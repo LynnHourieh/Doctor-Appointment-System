@@ -76,58 +76,68 @@ const Appointments = () => {
         <p>View and Manage your upcoming and past appointments</p>
         <div className="appointments-search">
             <InputField
-            placeholder="Search by name"
-            value={searchTerm}
-            onChange={(name, value) => setSearchTerm(value)}
+                placeholder="Search by name"
+                value={searchTerm}
+                onChange={(name, value) => setSearchTerm(value)}
             />
-        </div>   
+        </div>
         <table>
             <thead>
-            <tr>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Patient Name</th>
-                <th>Doctor Name</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Patient Name</th>
+                    <th>Doctor Name</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
             </thead>
             <tbody>
-            {appointments
-                .filter((appt) => {
-                const term = searchTerm.toLowerCase();
-                return (
-                    appt.patient.user.fullName.toLowerCase().includes(term) ||
-                    appt.doctor.user.fullName.toLowerCase().includes(term)
-                );
-                })
-                .map((appt) => (
-                <tr key={appt.id}>
-                    <td>{new Date(appt.appointmentDate).toISOString().slice(0, 10)}</td>
-                    <td>{appt.appointmentTime}</td>
-                    <td>{appt.patient.user.fullName}</td>
-                    <td>{appt.doctor.user.fullName}</td>
-                    <td>{appt.status}</td>
-                    <td>
-                    {appt.status === "PENDING" ? (
-                        <div className="appointments-action-buttons">
-                        <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
-                        <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
-                        <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
-                        </div>
-                    )
-                        : appt.status === "REJECTED" ? (
-                        <div className="appointments-action-buttons">
-                            <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" />
-                            <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} collapse variant="tertiary" />
-                        </div>
-                        ) : null}
-                    </td>
-                </tr>
-                ))}
+                {appointments
+                    .filter((appt) => {
+                        const term = searchTerm.toLowerCase();
+                        return (
+                            appt.patient.user.fullName.toLowerCase().includes(term) ||
+                            appt.doctor.user.fullName.toLowerCase().includes(term)
+                        );
+                    })
+                    .map((appt) => (
+                        <tr key={appt.id}>
+                            <td>{new Date(appt.appointmentDate).toISOString().slice(0, 10)}</td>
+                            <td>{appt.appointmentTime}</td>
+                            <td>{appt.patient.user.fullName}</td>
+                            <td>{appt.doctor.user.fullName}</td>
+                            <td
+                                className={`appointment ${appt.status === "CONFIRMED"
+                                        ? "status-confirmed"
+                                        : appt.status === "REJECTED"
+                                            ? "status-rejected"
+                                            : ""
+                                    }`}
+                            >
+                                {appt.status}
+
+                            </td>
+                            <td>
+                                {appt.status === "PENDING" ? (
+                                    <div className="appointments-action-buttons">
+                                        <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
+                                        <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
+                                        <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                                    </div>
+                                )
+                                    : appt.status === "REJECTED" ? (
+                                        <div className="appointments-action-buttons">
+                                            <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" />
+                                            <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} collapse variant="tertiary" />
+                                        </div>
+                                    ) : null}
+                            </td>
+                        </tr>
+                    ))}
             </tbody>
         </table>
-      
+
     </div>)
 }
 export default Appointments;
