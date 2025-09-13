@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import Button from "../../components/button/Button";
 import InputField from "../../components/input-field/InputField";
 import "./appointments-styles.scss"
+import { calenderClock, CancelIcon, checkIcon, smallCloseIcon } from "../../assets/images/icons";
+import { useNavigate } from "react-router-dom";
 
 const Appointments = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const [appointments, setAppointments] = useState<Array<{
         id: number;
-        date: string;
-        time: string;
+        appointmentDate: string;
+        appointmentTime: string;
         patient: {
             user: any;
             id: number;
@@ -39,7 +41,32 @@ const Appointments = () => {
         }
     };
     useEffect(() => { fetchAppointments() }, [])
-    console.log(appointments);
+    const navigate = useNavigate();
+
+    const updateAppointmentStatus = async (appointmentId: number, newStatus: string) => {
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        try {
+            const response = await fetch(`${baseUrl}/appointments/${appointmentId}/status`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({ action: newStatus }),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to update appointment status");
+            }
+
+            setAppointments((prev) =>
+                prev.map((appt) =>
+                    appt.id === appointmentId ? { ...appt, status: newStatus } : appt
+                )
+            );
+        } catch (error) {
+            console.error("Error updating appointment status:", error);
+        }
+    };
 
     return (<div className="appointments-container">
         <div className="appointments-title">
@@ -48,54 +75,59 @@ const Appointments = () => {
         </div>
         <p>View and Manage your upcoming and past appointments</p>
         <div className="appointments-search">
-            <InputField placeholder="Search by name" value={searchTerm} onChange={(name, value) => { setSearchTerm(value) }} />
-            <InputField placeholder="Filter by date" type="date" value={searchTerm} onChange={(name, value) => { setSearchTerm(value) }} />
-        </div>
-        <table >
+            <InputField
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(name, value) => setSearchTerm(value)}
+            />
+        </div>   
+        <table>
             <thead>
-                <tr >
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Patient Name</th>
-                    <th>Doctor Name</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Patient Name</th>
+                <th>Doctor Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
-                {appointments?.map((appt) => (
-                    <tr key={appt.id} >
-                        <td>{appt.date}</td>
-                        <td>{appt.time}</td>
-                        <td>{appt.patient.user.fullName}</td>
-                        <td>{appt.doctor.user.fullName}</td>
-                        <td>{appt.status}</td>
-                        <td>
-                            {appt.status === "Pending" && (
-                                <>
-                                    <Button
-                                        text="Confirm" variant="tertiary"
-                                        onClickHandler={() => console.log("Confirm", appt.id)}
-                                    />
-
-                                    <Button text="Cancel" variant="tertiary" onClickHandler={() => console.log("Cancel", appt.id)} />
-                                </>
-                            )}
-                            {appt.status === "Cancelled" && (
-                                <Button text="Reschedule" variant="tertiary" onClickHandler={() => console.log("Reschedule", appt.id)} />
-
-
-                            )}
-                            {appt.status === "Confirmed" && (
-                                <Button text="View Notes" variant="tertiary" onClickHandler={() => console.log("View Notes", appt.id)} />
-
-
-                            )}
-                        </td>
-                    </tr>
+            {appointments
+                .filter((appt) => {
+                const term = searchTerm.toLowerCase();
+                return (
+                    appt.patient.user.fullName.toLowerCase().includes(term) ||
+                    appt.doctor.user.fullName.toLowerCase().includes(term)
+                );
+                })
+                .map((appt) => (
+                <tr key={appt.id}>
+                    <td>{new Date(appt.appointmentDate).toISOString().slice(0, 10)}</td>
+                    <td>{appt.appointmentTime}</td>
+                    <td>{appt.patient.user.fullName}</td>
+                    <td>{appt.doctor.user.fullName}</td>
+                    <td>{appt.status}</td>
+                    <td>
+                    {appt.status === "PENDING" ? (
+                        <div className="appointments-action-buttons">
+                        <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
+                        <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
+                        <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                        </div>
+                    )
+                        : appt.status === "REJECTED" ? (
+                        <div className="appointments-action-buttons">
+                            <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" />
+                            <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} collapse variant="tertiary" />
+                        </div>
+                        ) : null}
+                    </td>
+                </tr>
                 ))}
             </tbody>
         </table>
+      
     </div>)
 }
 export default Appointments;

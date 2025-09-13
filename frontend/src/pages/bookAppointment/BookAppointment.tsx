@@ -22,18 +22,12 @@ const BookAppointment = () => {
     const { specialties } = useSpecialties();
     const currentUserId = localStorage.getItem("userId");
 
-    console.log("selectedDoctorId", selectedDoctorId);
-    console.log("notes", notes);
-    console.log("selectedDate", selectedDate);
-    console.log("patientId", currentUserId)
-
-
     const handleSaveAppointment = () => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
         const appointmentData = {
             doctorId: selectedDoctorId,
             patientId: currentUserId,
-            appointmentDate: selectedDate?.toISOString(),
+            appointmentDate: selectedDate ? selectedDate.toISOString().slice(0, 10) : undefined,
             appointmentTime: selectedTimeSlot,
             reason: notes
         };

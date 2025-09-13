@@ -128,21 +128,27 @@ model Patient {
 }
 
 model Appointment {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
 
   doctorId  String
   patientId String
-  doctor    Doctor  @relation(fields: [doctorId], references: [id], onDelete: Restrict)
-  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Restrict)
 
-  startAt DateTime          @db.Timestamptz(6)
-  status  AppointmentStatus @default(PENDING)
-  reason  String?
+  
+  appointmentDate DateTime @db.Date    
+  appointmentTime String                
+
+  status    AppointmentStatus @default(PENDING)
+  reason    String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt      @db.Timestamptz(6)
 
-  @@unique([doctorId, startAt]) // block exact same slot for same doctor
-  @@index([doctorId, startAt])
-  @@index([patientId, startAt])
+  // Prevent double-book for same doctor/date/time
+  @@unique([doctorId, appointmentDate, appointmentTime])
+
+  // Helpful indexes
+  @@index([patientId, appointmentDate])
+  @@index([doctorId, appointmentDate])
 }
