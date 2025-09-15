@@ -6,8 +6,10 @@ import { calenderClock, CancelIcon, checkIcon, smallCloseIcon } from "../../asse
 import { useNavigate } from "react-router-dom";
 
 const Appointments = () => {
+    const isAdmin = localStorage.getItem("userRole") === "ADMIN";
+    const isDoctor = localStorage.getItem("userRole") === "DOCTOR";
+    const isPatient = localStorage.getItem("userRole") === "PATIENT";
     const [searchTerm, setSearchTerm] = useState("");
-
     const [appointments, setAppointments] = useState<Array<{
         id: number;
         appointmentDate: string;
@@ -109,10 +111,10 @@ const Appointments = () => {
                             <td>{appt.doctor.user.fullName}</td>
                             <td
                                 className={`appointment ${appt.status === "CONFIRMED"
-                                        ? "status-confirmed"
-                                        : appt.status === "REJECTED"
-                                            ? "status-rejected"
-                                            : ""
+                                    ? "status-confirmed"
+                                    : appt.status === "REJECTED"
+                                        ? "status-rejected"
+                                        : ""
                                     }`}
                             >
                                 {appt.status}
@@ -121,14 +123,23 @@ const Appointments = () => {
                             <td>
                                 {appt.status === "PENDING" ? (
                                     <div className="appointments-action-buttons">
-                                        <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
-                                        <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
-                                        <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                                        {(isAdmin || isDoctor) ? (
+                                            <>
+                                                <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
+                                                <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
+                                                <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                                            </>
+                                        ) : (
+                                            <> <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                                                <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
+                                            </>
+
+                                        )}
                                     </div>
                                 )
                                     : appt.status === "REJECTED" ? (
                                         <div className="appointments-action-buttons">
-                                            <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" />
+                                            {(isAdmin || isDoctor) ? <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" /> : null}
                                             <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} collapse variant="tertiary" />
                                         </div>
                                     ) : null}

@@ -23,7 +23,7 @@ const BookAppointment = () => {
     const currentUserId = localStorage.getItem("userId");
     const [doctorAvailability, setDoctorAvailability] = useState<any[]>([]);
     const [timeSlots, setTimeSlots] = useState<{ value: string; label: string }[]>([]);
-    const STEP_MIN = 15; 
+    const STEP_MIN = 15;
 
     const handleSaveAppointment = () => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -85,7 +85,7 @@ const BookAppointment = () => {
     }, [searchTerm]);
     useEffect(() => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
-       
+
         if (!selectedDoctorId) { setDoctorAvailability([]); return; }
         fetch(`${baseUrl}/availability/${selectedDoctorId}`, { credentials: 'include' })
             .then(r => r.json())
@@ -148,14 +148,14 @@ const BookAppointment = () => {
                     </div>
                 </div>
                 <div className='book-appointment-section'>
-                    {selectedDoctorId ?  <div className='book-appointment-choose-date'>Choose Date and Time:</div>: <div className='book-appointment-choose-date'>Select Doctor First</div>}
-                
+                    {selectedDoctorId ? <div className='book-appointment-choose-date'>Choose Date and Time:</div> : <div className='book-appointment-choose-date'>Select Doctor First</div>}
+
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateCalendar value={selectedDate}
                             onChange={(newValue) => setSelectedDate(newValue)}
                             disablePast
-                            disabled={!selectedDoctorId} 
-                            
+                            disabled={!selectedDoctorId}
+
                         />
                     </LocalizationProvider>
                     <div className='book-appointment-time-slots'>
