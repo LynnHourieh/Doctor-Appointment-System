@@ -2,11 +2,13 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const getAvailabilitiesById = async (req, res) => {
-    const { doctorId } = req.params;
+    const { id } = req.params;
+  
+
     try {
         const availability = await (prisma as any).doctorAvailability.findMany({
             where: {
-                doctorId: doctorId,
+                doctorId: id,
             },
             include: {
                 doctor: { select: { id: true, user: { select: { fullName: true } } } },

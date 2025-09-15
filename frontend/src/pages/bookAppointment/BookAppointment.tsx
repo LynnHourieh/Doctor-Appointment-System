@@ -85,13 +85,16 @@ const BookAppointment = () => {
     }, [searchTerm]);
     useEffect(() => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
+        console.log("selectedDoctorId", selectedDoctorId);
         if (!selectedDoctorId) { setDoctorAvailability([]); return; }
         fetch(`${baseUrl}/availability/${selectedDoctorId}`, { credentials: 'include' })
             .then(r => r.json())
             .then(setDoctorAvailability)
             .catch(console.error);
     }, [selectedDoctorId]);
-   
+
+   console.log(doctorAvailability)
+
     useEffect(() => {
         if (!selectedDate) return;
 
@@ -178,7 +181,7 @@ const BookAppointment = () => {
                     <textarea className='book-appointment-notes' placeholder='Add any notes for the doctor' maxLength={500} value={notes} onChange={(e) => setNotes(e.target.value)}    ></textarea>
                 </div>
             </div>
-            <Button text='Confirm' onClickHandler={handleSaveAppointment} id="book-appointment-confirm-button" />
+            <Button text='Confirm' onClickHandler={handleSaveAppointment} id="book-appointment-confirm-button" disabled={!selectedTimeSlot || !selectedDoctorId || !selectedDate} />
         </div>
     );
 };
