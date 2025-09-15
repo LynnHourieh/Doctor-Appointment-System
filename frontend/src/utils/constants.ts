@@ -40,3 +40,15 @@ export const toInputDate = (value?: string | Date | null) => {
   // returns "YYYY-MM-DD"
   return d.toISOString().slice(0, 10);
 };
+
+// helpers
+export const toMin = (s: string) => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+export const toHHmm = (mins: number) =>
+  `${String(Math.floor(mins/60)).padStart(2,'0')}:${String(mins%60).padStart(2,'0')}`;
+export const toAMPM = (hhmm: string) => {
+  const [hStr, m] = hhmm.split(':'); let h = parseInt(hStr, 10);
+  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${m} ${ap}`;
+};
+
+
+

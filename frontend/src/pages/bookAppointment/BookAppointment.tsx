@@ -10,7 +10,7 @@ import { useSpecialties } from '../../hooks/useSpecialties';
 import type { UserInfo } from '../../models/user.types';
 import Button from '../../components/button/Button';
 import TimeSlotChip from '../../components/timeslotchip/TimeSlotChip';
-import { timeSlots } from '../../utils/constants';
+import { timeSlots, toAMPM, toHHmm, toMin } from '../../utils/constants';
 const BookAppointment = () => {
     const [searchTerm, setSearchTerm] = useState("");
     //fetch all doctors
@@ -21,6 +21,9 @@ const BookAppointment = () => {
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
     const { specialties } = useSpecialties();
     const currentUserId = localStorage.getItem("userId");
+    const [doctorAvailability, setDoctorAvailability] = useState<any[]>([]);
+    const [timeSlots, setTimeSlots] = useState<{ value: string; label: string }[]>([]);
+    const STEP_MIN = 15; 
 
     const handleSaveAppointment = () => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -67,6 +70,8 @@ const BookAppointment = () => {
             console.error("Error fetching doctors:", error);
         }
     };
+
+
     useEffect(() => {
 
         if (searchTerm) {
@@ -78,6 +83,45 @@ const BookAppointment = () => {
             fetchDoctors();
         }
     }, [searchTerm]);
+    useEffect(() => {
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        if (!selectedDoctorId) { setDoctorAvailability([]); return; }
+        fetch(`${baseUrl}/availability/${selectedDoctorId}`, { credentials: 'include' })
+            .then(r => r.json())
+            .then(setDoctorAvailability)
+            .catch(console.error);
+    }, [selectedDoctorId]);
+   
+    useEffect(() => {
+        if (!selectedDate) return;
+
+        const dow = selectedDate.day(); // 0=Sun .. 6=Sat (matches your data: 6 → Saturday)
+        const windows = doctorAvailability.filter(w => w.dayOfWeek === dow);
+
+        // expand windows into "HH:mm" slots
+        let slots: string[] = [];
+        for (const w of windows) {
+            for (let t = toMin(w.startTime); t < toMin(w.endTime); t += STEP_MIN) {
+                slots.push(toHHmm(t));
+            }
+        }
+
+        // remove duplicates & sort
+        slots = Array.from(new Set(slots)).sort();
+
+        // (optional) hide past times if today
+        const todayISO = new Date().toISOString().slice(0, 10);
+        const selectedISO = selectedDate.toISOString().slice(0, 10);
+        if (todayISO === selectedISO) {
+            const now = new Date();
+            const nowHHmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            slots = slots.filter(s => s > nowHHmm);
+        }
+
+        setTimeSlots(slots.map(v => ({ value: v, label: toAMPM(v) })));
+    }, [doctorAvailability, selectedDate]);
+
+
     return (
         <div>
             <div className="book-appointment-title">
@@ -103,16 +147,28 @@ const BookAppointment = () => {
                     </div>
                 </div>
                 <div className='book-appointment-section'>
-
+                    {selectedDoctorId ?  <div className='book-appointment-choose-date'>Choose Date and Time:</div>: <div className='book-appointment-choose-date'>Select Doctor First</div>}
+                
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateCalendar value={selectedDate}
                             onChange={(newValue) => setSelectedDate(newValue)}
                             disablePast
+                            disabled={!selectedDoctorId} 
+                            
                         />
                     </LocalizationProvider>
-                    <div className='book-appointment-time-slots'> {timeSlots.map((timeSlot) => (
-                        <TimeSlotChip key={timeSlot} label={timeSlot} selected={timeSlot === selectedTimeSlot} onClick={() => setSelectedTimeSlot(timeSlot)} />
-                    ))}</div>
+                    <div className='book-appointment-time-slots'>
+                        {timeSlots.length === 0 && <div className="no-slots">No slots for this day</div>}
+                        {timeSlots.map(s => (
+                            <TimeSlotChip
+                                key={s.value}
+                                label={s.label}                      // "08:30 AM"
+                                selected={s.value === selectedTimeSlot}
+                                onClick={() => setSelectedTimeSlot(s.value)} // store "HH:mm"
+                            />
+                        ))}
+                    </div>
+
 
 
                 </div>
