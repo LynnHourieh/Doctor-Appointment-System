@@ -85,15 +85,13 @@ const BookAppointment = () => {
     }, [searchTerm]);
     useEffect(() => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
-        console.log("selectedDoctorId", selectedDoctorId);
+       
         if (!selectedDoctorId) { setDoctorAvailability([]); return; }
         fetch(`${baseUrl}/availability/${selectedDoctorId}`, { credentials: 'include' })
             .then(r => r.json())
             .then(setDoctorAvailability)
             .catch(console.error);
     }, [selectedDoctorId]);
-
-   console.log(doctorAvailability)
 
     useEffect(() => {
         if (!selectedDate) return;
