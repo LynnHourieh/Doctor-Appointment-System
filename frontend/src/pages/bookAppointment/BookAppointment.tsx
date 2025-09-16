@@ -24,6 +24,9 @@ const BookAppointment = () => {
     const [doctorAvailability, setDoctorAvailability] = useState<any[]>([]);
     const [timeSlots, setTimeSlots] = useState<{ value: string; label: string }[]>([]);
     const STEP_MIN = 15;
+    const isDoctor = localStorage.getItem("userRole") === "DOCTOR";
+    const userId = localStorage.getItem("userId");
+
 
     const handleSaveAppointment = () => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -71,7 +74,6 @@ const BookAppointment = () => {
         }
     };
 
-
     useEffect(() => {
 
         if (searchTerm) {
@@ -83,6 +85,7 @@ const BookAppointment = () => {
             fetchDoctors();
         }
     }, [searchTerm]);
+
     useEffect(() => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -133,18 +136,36 @@ const BookAppointment = () => {
                 <div className='book-appointment-section'>
                     <InputField placeholder="Search by name" value={searchTerm} onChange={(name, value) => { setSearchTerm(value) }} />
                     <div className='book-appointment-doctors-list'>
-                        {doctors.filter((doctor: any) => doctor.fullName.toLowerCase().includes(searchTerm.toLowerCase())).map((doctor: any) => {
-                            const selected = selectedDoctorId === doctor.id;
-                            return (
-                                <div key={doctor.id} className={`book-appointment-doctor-card ${selected ? "is-selected" : ""}`} onClick={() => setSelectedDoctorId(doctor.id)}>
-                                    <Avatar src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8" />
-                                    <div className='book-appointment-doctor-info'>
-                                        <h4 className='book-appointment-doctor-name'>{doctor.fullName}</h4>
-                                        <p className='book-appointment-doctor-specialty'> {specialties.find(s => s.value === String(doctor.doctor.specialtyId))?.text || "-"}</p>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        {isDoctor
+                            ? doctors
+                                .filter((doctor: any) => String(doctor.id) === String(userId))
+                                .map((doctor: any) => {
+                                    const selected = selectedDoctorId === doctor.id;
+                                    return (
+                                        <div key={doctor.id} className={`book-appointment-doctor-card ${selected ? "is-selected" : ""}`} onClick={() => setSelectedDoctorId(doctor.id)}>
+                                            <Avatar src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8" />
+                                            <div className='book-appointment-doctor-info'>
+                                                <h4 className='book-appointment-doctor-name'>{doctor.fullName}</h4>
+                                                <p className='book-appointment-doctor-specialty'> {specialties.find(s => s.value === String(doctor.doctor.specialtyId))?.text || "-"}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            : doctors
+                                .filter((doctor: any) => doctor.fullName.toLowerCase().includes(searchTerm.toLowerCase()))
+                                .map((doctor: any) => {
+                                    const selected = selectedDoctorId === doctor.id;
+                                    return (
+                                        <div key={doctor.id} className={`book-appointment-doctor-card ${selected ? "is-selected" : ""}`} onClick={() => setSelectedDoctorId(doctor.id)}>
+                                            <Avatar src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8" />
+                                            <div className='book-appointment-doctor-info'>
+                                                <h4 className='book-appointment-doctor-name'>{doctor.fullName}</h4>
+                                                <p className='book-appointment-doctor-specialty'> {specialties.find(s => s.value === String(doctor.doctor.specialtyId))?.text || "-"}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                        }
                     </div>
                 </div>
                 <div className='book-appointment-section'>
