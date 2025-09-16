@@ -187,3 +187,17 @@ export interface TimeSlotChipProps {
   disabled?: boolean;
   onClick?: () => void;
 }
+
+export interface NumberInputProps {
+  id?: string;
+  name: string;
+  label?: string;
+  disabled?: boolean;
+  value: string | number | null;
+  min?: number;
+  max?: number;
+  onChange: (name: string, value: number | null) => void;
+  placeholder?: string;
+  onClear?: () => void;
+  errorMessage?: string;
+}

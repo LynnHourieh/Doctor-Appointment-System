@@ -1,8 +1,9 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
+import type { ChangeEvent } from "react";
 
 import "./number-input-styles.scss";
-import { NumberInputProps } from "@app/models/components";
-import { ErrorIcon } from "@app/assets/images/icons";
+import type { NumberInputProps } from "../../models/components";
+import { ErrorIcon } from "../../assets/images/icons";
 
 const NumberInput: React.FC<NumberInputProps> = ({
   id,
@@ -37,14 +38,14 @@ const NumberInput: React.FC<NumberInputProps> = ({
   };
 
   const handleIncrement = () => {
-    const numericValue = parseInt(value || "0", 10);
+    const numericValue = parseInt(String(value ?? "0"), 10);
     if (!isNaN(numericValue) && (max === undefined || numericValue < max)) {
       onChange(name, numericValue + 1);
     }
   };
 
   const handleDecrement = () => {
-    const numericValue = parseInt(value || "0", 10);
+    const numericValue = parseInt(String(value ?? "0"), 10);
     if (!isNaN(numericValue) && (min === undefined || numericValue > min)) {
       onChange(name, numericValue - 1);
     }

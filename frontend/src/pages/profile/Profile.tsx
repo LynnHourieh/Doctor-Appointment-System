@@ -9,6 +9,7 @@ import TagInput from "../../components/tagInput/TagInput";
 import { useSpecialties } from "../../hooks/useSpecialties";
 import { EditIcon } from "../../assets/images/icons";
 import { toInputDate } from "../../utils/constants";
+import NumberInput from "../../components/number-input/NumberInput";
 
 
 
@@ -19,7 +20,7 @@ const Profile = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+console.log("UserInfo", userInfo);
     const bloodTypesOptions = [
         { text: "A+", value: "A+" },
         { text: "A-", value: "A-" },
@@ -140,11 +141,17 @@ const Profile = () => {
                 if (role === "DOCTOR") {
                     const additionalInfo = getDoctorInfo({
                         ...doctor,
-
                     });
+                    // Ensure languages is always an array
+                    const normalizedLanguages = Array.isArray(additionalInfo.languages)
+                        ? additionalInfo.languages
+                        : additionalInfo.languages
+                        ? additionalInfo.languages.split(",").map((lang) => lang.trim()).filter(Boolean)
+                        : [];
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
+                        languages: normalizedLanguages,
                         role: "DOCTOR",
                     });
                 } else if (role === "PATIENT") {
@@ -347,7 +354,7 @@ const Profile = () => {
                                         <InputField
                                             type="text"
                                             name="languages"
-                                            value={userInfo.languages || ""}
+                                            value={Array.isArray(userInfo.languages) ? userInfo.languages.join(", ") : userInfo.languages || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
                                             placeholder="Enter languages"
                                         />
@@ -469,13 +476,13 @@ const Profile = () => {
                                 <div>
                                     <label>Weight (kg)</label>
                                     {isEditing ? (
-                                        <InputField
-                                            type="text"
+                                        <NumberInput
                                             name="weight_kg"
                                             value={userInfo?.weight_kg || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
                                             placeholder="Enter weight in Kg"
-                                        />
+                                        /> 
+                                    
                                     ) : (
                                         <p>{userInfo?.weight_kg || "-"}</p>
                                     )}
@@ -483,8 +490,7 @@ const Profile = () => {
                                 <div>
                                     <label>Height (cm)</label>
                                     {isEditing ? (
-                                        <InputField
-                                            type="text"
+                                        <NumberInput
                                             name="height_cm"
                                             value={userInfo?.height_cm || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
