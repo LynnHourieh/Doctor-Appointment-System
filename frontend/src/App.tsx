@@ -35,6 +35,8 @@ function App() {
         <Route path="/patient-details/:id" element={<PatientDetails />} />
         <Route path="/doctor-details/:id" element={<DoctorDetails />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
+        <Route path="/book-appointment/:patientId" element={<BookAppointment />} />
+
       </Route>
 
       {/* Auth Routes without Sidebar */}

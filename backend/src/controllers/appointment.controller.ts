@@ -21,7 +21,7 @@ const getAllAppointments = async (req, res) => {
 
 // GET /appointments/user/:id
 const getAppointmentsById = async (req, res) => {
-    const { id } = req.params; 
+    const { id } = req.params;
     try {
         const appointments = await prisma.appointment.findMany({
             where: {
@@ -47,31 +47,6 @@ const getAppointmentsById = async (req, res) => {
     }
 };
 
-function parseToHHmmStrict(input: string): string | null {
-    const s = String(input).trim();
-
-    // 12-hour with minutes: "9:00 AM", "12:30 pm"
-    const m12 = s.match(/^(\d{1,2}):([0-5]\d)\s*(AM|PM)$/i);
-    if (m12) {
-        let h = parseInt(m12[1], 10);
-        const mm = m12[2];
-        const ap = m12[3].toUpperCase();
-        if (h < 1 || h > 12) return null;
-        if (ap === 'PM' && h !== 12) h += 12;
-        if (ap === 'AM' && h === 12) h = 0;
-        return `${String(h).padStart(2, '0')}:${mm}`;
-    }
-
-    // 24-hour: "09:00", "13:00"
-    const m24 = s.match(/^([01]?\d|2[0-3]):([0-5]\d)$/);
-    if (m24) {
-        const h = parseInt(m24[1], 10);
-        const mm = m24[2];
-        return `${String(h).padStart(2, '0')}:${mm}`;
-    }
-
-    return null;
-}
 
 const addAppointment = async (req, res) => {
     try {
@@ -195,4 +170,55 @@ const updateAppointmentStatus = async (req, res) => {
     }
 };
 
-export { getAllAppointments, getAppointmentsById, addAppointment, updateAppointmentStatus };
+const updatedAppointment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { doctorId, appointmentDate, appointmentTime, reason } = req.body;
+
+        if (!doctorId || !appointmentDate || !appointmentTime) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const existing = await prisma.appointment.findUnique({
+            where: { id },
+        });
+
+        if (!existing) {
+            return res.status(404).json({ message: "Appointment not found" });
+        }
+        const dateStr = (appointmentDate)?.trim();
+        const timeStr = (appointmentTime)?.trim();
+
+        if (!dateStr || !timeStr) {
+            return res.status(400).json({ message: 'date (YYYY-MM-DD) and time ("9:00 AM" or "HH:mm") are required' });
+        }
+
+
+
+        const apptDate = new Date(`${dateStr}T00:00:00Z`);
+        if (isNaN(apptDate.getTime())) {
+            return res.status(400).json({ message: 'date must be YYYY-MM-DD' });
+        }
+        const updated = await prisma.appointment.update({
+            where: { id },
+            data: {
+                doctorId,
+                appointmentDate: apptDate,
+                appointmentTime: timeStr,
+                reason,
+                patientId: existing.patientId,
+                status: "PENDING",
+            },
+        });
+
+        res.status(200).json({
+            message: "Appointment updated successfully",
+            appointment: updated,
+        });
+    } catch (error) {
+        console.error("Error updating appointment:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+export { getAllAppointments, getAppointmentsById, addAppointment, updateAppointmentStatus, updatedAppointment };

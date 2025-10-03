@@ -10,6 +10,7 @@ import { useSpecialties } from "../../hooks/useSpecialties";
 import { EditIcon } from "../../assets/images/icons";
 import { useParams } from "react-router-dom";
 import "./patient-details-styles.scss";
+import { toInputDate } from "../../utils/constants";
 
 
 
@@ -115,20 +116,19 @@ const PatientDetails = () => {
             try {
                 //fetch patient info
                 const data = await getpatientInfo();
-                console.log("data", data)
-
+    
                 const {
                     id,
                     fullName,
                     email,
                     dateOfBirth,
                     gender,
-                    roleId,
+                    role,
                     doctor,
                     patient
                 } = data;
 
-                const role = roleId === 1 ? "admin" : roleId === 2 ? "doctor" : "patient";
+             
 
                 // Default user info
                 const baseInfo = {
@@ -141,36 +141,35 @@ const PatientDetails = () => {
                 };
 
 
-                if (role === "doctor") {
+                 if (role === "DOCTOR") {
                     const additionalInfo = getDoctorInfo({
                         ...doctor,
-                        role: "doctor"
                     });
+                    // Ensure languages is always an array
+                    const normalizedLanguages = Array.isArray(additionalInfo.languages)
+                        ? additionalInfo.languages
+                        : additionalInfo.languages
+                        ? additionalInfo.languages.split(",").map((lang) => lang.trim()).filter(Boolean)
+                        : [];
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
-                        role: "doctor",
-                        roleId: roleId,
-
+                        languages: normalizedLanguages,
+                        role: "DOCTOR",
                     });
-                } else if (role === "patient") {
-                    const additionalInfo = getPatientInfo({ ...patient, role: "patient", roleId: roleId });
+                } else if (role === "PATIENT") {
+                    const additionalInfo = getPatientInfo({ ...patient });
                     setUserInfo({
                         ...baseInfo,
                         ...additionalInfo,
-                        role: "patient",
-                        roleId: roleId,
-
+                        role: "PATIENT"
                     });
                     setConditions(additionalInfo.known_conditions)
                     setAllergies(additionalInfo.allergies)
-                } else if (role === "admin") {
-                    // Admin 
+                } else if (role === "ADMIN") {
                     setUserInfo({
                         ...baseInfo,
-                        role: "admin",
-                        roleId: roleId,
-                        statusId: data.statusId ?? 0,
+                        role: "ADMIN",
                     });
                 }
 
@@ -252,7 +251,7 @@ const PatientDetails = () => {
                                 <InputField
                                     type="date"
                                     name="dateOfBirth"
-                                    value={userInfo?.dateOfBirth || ""}
+                                    value={toInputDate(userInfo?.dateOfBirth)}
                                     onChange={(name, value) => handleInputChange(name, value)}
                                 />
                             ) : (
@@ -269,8 +268,8 @@ const PatientDetails = () => {
                                 <Select
                                     name="gender"
                                     options={[
-                                        { text: "Male", value: "male" },
-                                        { text: "Female", value: "female" }
+                                        { text: "Male", value: "MALE" },
+                                        { text: "Female", value: "FEMALE" }
                                     ]}
                                     value={userInfo?.gender || ""}
                                     onChange={(name, value) => handleInputChange(name, value)}
@@ -288,7 +287,7 @@ const PatientDetails = () => {
 
                     <hr />
                     <div className="patient-info">
-                        {userInfo?.role === "doctor" ? (
+                        {userInfo?.role === "DOCTOR" ? (
 
                             <>
                                 <div>
@@ -353,7 +352,7 @@ const PatientDetails = () => {
                                         <InputField
                                             type="text"
                                             name="languages"
-                                            value={userInfo.languages || ""}
+                                        value={Array.isArray(userInfo.languages) ? userInfo.languages.join(", ") : userInfo.languages || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
                                             placeholder="Enter languages"
                                         />
@@ -423,7 +422,7 @@ const PatientDetails = () => {
                                     )}
                                 </div>
                             </>
-                        ) : userInfo?.role === "patient" ? (
+                        ) : userInfo?.role === "PATIENT" ? (
                             // Patient Info
                             <>
 

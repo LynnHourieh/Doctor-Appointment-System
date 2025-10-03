@@ -10,8 +10,14 @@ import { useSpecialties } from '../../hooks/useSpecialties';
 import type { UserInfo } from '../../models/user.types';
 import Button from '../../components/button/Button';
 import TimeSlotChip from '../../components/timeslotchip/TimeSlotChip';
-import { timeSlots, toAMPM, toHHmm, toMin } from '../../utils/constants';
+import { toAMPM, toHHmm, toMin } from '../../utils/constants';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 const BookAppointment = () => {
+    const query = new URLSearchParams(useLocation().search);
+    const queryAppointmentId = query.get("appointmentId");
+    const isRescheduled = Boolean(queryAppointmentId);
+    console.log({ queryAppointmentId });
     const [searchTerm, setSearchTerm] = useState("");
     //fetch all doctors
     const [doctors, setDoctors] = useState<UserInfo[]>([]);
@@ -26,9 +32,12 @@ const BookAppointment = () => {
     const STEP_MIN = 15;
     const isDoctor = localStorage.getItem("userRole") === "DOCTOR";
     const userId = localStorage.getItem("userId");
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate= useNavigate()
 
-
+    console.log(isRescheduled)
     const handleSaveAppointment = () => {
+        setIsLoading(true);
         const baseUrl = import.meta.env.VITE_BASE_URL;
         const appointmentData = {
             doctorId: selectedDoctorId,
@@ -49,15 +58,52 @@ const BookAppointment = () => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
+
                 return response.json();
             })
             .then(data => {
+                setIsLoading(false);
                 console.log("Appointment created successfully:", data);
             })
             .catch(error => {
+                setIsLoading(false);
                 console.error("Error creating appointment:", error);
             });
     }
+
+    const handleUpdateAppointment = () => {
+        setIsLoading(true);
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        const appointmentData = {
+            doctorId: selectedDoctorId,
+            appointmentDate: selectedDate ? selectedDate.toISOString().slice(0, 10) : undefined,
+            appointmentTime: selectedTimeSlot,
+            reason: notes
+        };
+        fetch(`${baseUrl}/appointments/${queryAppointmentId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(appointmentData),
+            credentials: "include"
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                setIsLoading(false);
+                navigate('/my-appointments');
+            })
+            .catch(error => {
+                setIsLoading(false);
+                console.error("Error updating appointment:", error);
+            });
+    }
+
 
     const fetchDoctors = async () => {
         const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -191,8 +237,6 @@ const BookAppointment = () => {
                         ))}
                     </div>
 
-
-
                 </div>
 
                 <div className='book-appointment-section'>
@@ -200,7 +244,7 @@ const BookAppointment = () => {
                     <textarea className='book-appointment-notes' placeholder='Add any notes for the doctor' maxLength={500} value={notes} onChange={(e) => setNotes(e.target.value)}    ></textarea>
                 </div>
             </div>
-            <Button text='Confirm' onClickHandler={handleSaveAppointment} id="book-appointment-confirm-button" disabled={!selectedTimeSlot || !selectedDoctorId || !selectedDate} />
+            <Button text={isRescheduled ? `Update` : `Schedule`} onClickHandler={isRescheduled ? handleUpdateAppointment : handleSaveAppointment} id="book-appointment-confirm-button" disabled={!selectedTimeSlot || !selectedDoctorId || !selectedDate} isLoading={isLoading} />
         </div>
     );
 };

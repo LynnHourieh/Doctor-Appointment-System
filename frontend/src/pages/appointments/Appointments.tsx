@@ -70,6 +70,7 @@ const Appointments = () => {
         }
     };
 
+    console.log("Appointments:", appointments);
     return (<div className="appointments-container">
         <div className="appointments-title">
             <h2 className="appointments-title-text">My Appointments</h2>
@@ -127,10 +128,14 @@ const Appointments = () => {
                                             <>
                                                 <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
                                                 <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
-                                                <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                                                <Button icon={calenderClock} variant="tertiary" collapse onClickHandler={() => {
+                                                    navigate(`/book-appointment?appointmentId=${appt.id}`)
+                                                }} />
                                             </>
                                         ) : (
-                                            <> <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} variant="tertiary" collapse />
+                                            <> <Button icon={calenderClock} variant="tertiary" collapse  onClickHandler={() => {
+                                                    navigate(`/book-appointment?appointmentId=${appt.id}`)
+                                                }}/>
                                                 <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
                                             </>
 
@@ -140,7 +145,9 @@ const Appointments = () => {
                                     : appt.status === "REJECTED" ? (
                                         <div className="appointments-action-buttons">
                                             {(isAdmin || isDoctor) ? <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" /> : null}
-                                            <Button icon={calenderClock} onClickHandler={() => { navigate("/book-appointment") }} collapse variant="tertiary" />
+                                            <Button icon={calenderClock} collapse variant="tertiary" onClickHandler={() => {
+                                                    navigate(`/book-appointment?appointmentId=${appt.id}`)
+                                                }} />
                                         </div>
                                     ) : null}
                             </td>
