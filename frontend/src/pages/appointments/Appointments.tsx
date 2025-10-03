@@ -4,12 +4,16 @@ import InputField from "../../components/input-field/InputField";
 import "./appointments-styles.scss"
 import { calenderClock, CancelIcon, checkIcon, smallCloseIcon } from "../../assets/images/icons";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../../components/spinner/Spinner";
 
 const Appointments = () => {
     const isAdmin = localStorage.getItem("userRole") === "ADMIN";
     const isDoctor = localStorage.getItem("userRole") === "DOCTOR";
     const isPatient = localStorage.getItem("userRole") === "PATIENT";
     const [searchTerm, setSearchTerm] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingId, setLoadingId] = useState(0);
+    const [loadingAction, setLoadingAction] = useState("");
     const [appointments, setAppointments] = useState<Array<{
         id: number;
         appointmentDate: string;
@@ -46,8 +50,10 @@ const Appointments = () => {
     const navigate = useNavigate();
 
     const updateAppointmentStatus = async (appointmentId: number, newStatus: string) => {
+
         const baseUrl = import.meta.env.VITE_BASE_URL;
         try {
+            setIsLoading(true);
             const response = await fetch(`${baseUrl}/appointments/${appointmentId}/status`, {
                 method: "PATCH",
                 headers: {
@@ -57,6 +63,7 @@ const Appointments = () => {
                 body: JSON.stringify({ action: newStatus }),
             });
             if (!response.ok) {
+                setIsLoading(false);
                 throw new Error("Failed to update appointment status");
             }
 
@@ -65,12 +72,12 @@ const Appointments = () => {
                     appt.id === appointmentId ? { ...appt, status: newStatus } : appt
                 )
             );
+            setIsLoading(false);
         } catch (error) {
             console.error("Error updating appointment status:", error);
         }
     };
 
-    console.log("Appointments:", appointments);
     return (<div className="appointments-container">
         <div className="appointments-title">
             <h2 className="appointments-title-text">My Appointments</h2>
@@ -126,17 +133,40 @@ const Appointments = () => {
                                     <div className="appointments-action-buttons">
                                         {(isAdmin || isDoctor) ? (
                                             <>
-                                                <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} variant="tertiary" collapse />
-                                                <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
+                                                {isLoading && loadingId === appt.id  && loadingAction === "CONFIRMED"? (
+                                                   <Spinner size="16px"/>
+                                                ) : (
+                                                    <Button
+                                                        icon={checkIcon}
+                                                        onClickHandler={() => {
+                                                            setLoadingId(appt.id);
+                                                            updateAppointmentStatus(appt.id, "CONFIRMED");
+                                                              setLoadingAction("CONFIRMED");
+                                                        }}
+                                                        variant="tertiary"
+                                                        collapse
+                                                        disabled={isLoading}
+                                                    />
+                                                )}
+
+                                                {isLoading && loadingId === appt.id  && loadingAction === "REJECTED" ? (
+                                                   <Spinner size="16px"/>
+                                                ) : (<Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED"), setLoadingId(appt.id),  setLoadingAction("REJECTED"); }} variant="tertiary" collapse disabled={isLoading}
+                                                />)}
+                                               
                                                 <Button icon={calenderClock} variant="tertiary" collapse onClickHandler={() => {
                                                     navigate(`/book-appointment?appointmentId=${appt.id}`)
-                                                }} />
+                                                }} disabled={isLoading} />
                                             </>
                                         ) : (
-                                            <> <Button icon={calenderClock} variant="tertiary" collapse  onClickHandler={() => {
-                                                    navigate(`/book-appointment?appointmentId=${appt.id}`)
-                                                }}/>
-                                                <Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED") }} variant="tertiary" collapse />
+                                            <> <Button icon={calenderClock} variant="tertiary" collapse onClickHandler={() => {
+                                                navigate(`/book-appointment?appointmentId=${appt.id}`)
+                                            }} disabled={isLoading} />
+                                            
+                                                {isLoading && loadingId === appt.id   && loadingAction === "REJECTED" ? (
+                                                   <Spinner size="16px"/>
+                                                ) : (<Button icon={smallCloseIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "REJECTED"), setLoadingId(appt.id),  setLoadingAction("REJECTED"); }} variant="tertiary" collapse disabled={isLoading}
+                                                />)}
                                             </>
 
                                         )}
@@ -144,10 +174,23 @@ const Appointments = () => {
                                 )
                                     : appt.status === "REJECTED" ? (
                                         <div className="appointments-action-buttons">
-                                            {(isAdmin || isDoctor) ? <Button icon={checkIcon} onClickHandler={() => { updateAppointmentStatus(appt.id, "CONFIRMED") }} collapse variant="tertiary" /> : null}
+                                            {(isAdmin || isDoctor) ? (
+                                                isLoading && loadingId === appt.id  &&  loadingAction === "CONFIRMED"? (
+                                                   <Spinner size="16px"/>
+                                                ) : (
+                                                    <Button
+                                                        icon={checkIcon}
+                                                        onClickHandler={() => {updateAppointmentStatus(appt.id, "CONFIRMED") , setLoadingAction("CONFIRMED"), setLoadingId(appt.id)}}
+                                                        collapse
+                                                        variant="tertiary"
+                                                    />
+                                                )
+                                            ) : null}
+                                           
+
                                             <Button icon={calenderClock} collapse variant="tertiary" onClickHandler={() => {
-                                                    navigate(`/book-appointment?appointmentId=${appt.id}`)
-                                                }} />
+                                                navigate(`/book-appointment?appointmentId=${appt.id}`)
+                                            }} />
                                         </div>
                                     ) : null}
                             </td>

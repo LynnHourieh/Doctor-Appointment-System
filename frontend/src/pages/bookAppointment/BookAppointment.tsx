@@ -33,7 +33,7 @@ const BookAppointment = () => {
     const isDoctor = localStorage.getItem("userRole") === "DOCTOR";
     const userId = localStorage.getItem("userId");
     const [isLoading, setIsLoading] = useState(false);
-    const navigate= useNavigate()
+    const navigate = useNavigate()
 
     console.log(isRescheduled)
     const handleSaveAppointment = () => {
@@ -63,7 +63,7 @@ const BookAppointment = () => {
             })
             .then(data => {
                 setIsLoading(false);
-                console.log("Appointment created successfully:", data);
+                navigate('/my-appointments');
             })
             .catch(error => {
                 setIsLoading(false);
