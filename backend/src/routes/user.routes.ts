@@ -16,4 +16,5 @@ router.get("/doctors", authenticateToken, getAllDoctors);
 router.get("/doctor-details/:id", authenticateToken, getDoctorById);
 router.put("/update-profile", authenticateToken, updateProfile);
 
+
 export default router;

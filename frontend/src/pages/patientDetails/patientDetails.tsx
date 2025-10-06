@@ -11,6 +11,7 @@ import { EditIcon } from "../../assets/images/icons";
 import { useParams } from "react-router-dom";
 import "./patient-details-styles.scss";
 import { toInputDate } from "../../utils/constants";
+import NumberInput from "../../components/number-input/NumberInput";
 
 
 
@@ -86,7 +87,7 @@ const PatientDetails = () => {
     const handleSaveChanges = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${baseUrl}/users/update-patient`, {
+            const response = await fetch(`${baseUrl}/users/update-profile`, {
                 method: "PUT",
                 credentials: "include",
                 headers: {
@@ -105,6 +106,7 @@ const PatientDetails = () => {
             setIsEditing(false);
             setIsLoading(false);
         } catch (error) {
+            setIsLoading(false);
             console.error("Update error:", error);
 
         }
@@ -474,13 +476,12 @@ const PatientDetails = () => {
                                 <div>
                                     <label>Weight (kg)</label>
                                     {isEditing ? (
-                                        <InputField
-                                            type="text"
+                                       <NumberInput
                                             name="weight_kg"
                                             value={userInfo?.weight_kg || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
                                             placeholder="Enter weight in Kg"
-                                        />
+                                        /> 
                                     ) : (
                                         <p>{userInfo?.weight_kg || "-"}</p>
                                     )}
@@ -488,8 +489,7 @@ const PatientDetails = () => {
                                 <div>
                                     <label>Height (cm)</label>
                                     {isEditing ? (
-                                        <InputField
-                                            type="text"
+                                        <NumberInput
                                             name="height_cm"
                                             value={userInfo?.height_cm || ""}
                                             onChange={(name, value) => setUserInfo({ ...userInfo, [name]: value })}
