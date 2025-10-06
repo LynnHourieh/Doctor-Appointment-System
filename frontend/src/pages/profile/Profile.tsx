@@ -20,7 +20,6 @@ const Profile = () => {
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-console.log("UserInfo", userInfo);
     const bloodTypesOptions = [
         { text: "A+", value: "A+" },
         { text: "A-", value: "A-" },

@@ -33,7 +33,7 @@ const Doctors = () => {
             }
             const data = await response.json();
             setDoctors(data);
-            console.log(data);
+       
         } catch (error) {
             console.error("Error fetching doctors:", error);
         }

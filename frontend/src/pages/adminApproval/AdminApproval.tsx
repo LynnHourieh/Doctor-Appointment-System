@@ -8,11 +8,10 @@ import { EmptySearchIcon } from "../../assets/images/icons";
 import Modal from "../../components/modal/Modal";
 import type { ButtonProps } from "../../models/components";
 import InfiniteScroll from "../../components/InfiniteScroll/InfiniteScroll";
+import { useAdmin } from "../../contexts/adminContext";
 
 const AdminApproval = () => {
-    const [pendingUsers, setPendingUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const { pendingUsers, loading, error, fetchPendingUsers,setLoading ,setPendingUsers} = useAdmin();
     const [activeTab, setActiveTab] = useState<"doctors" | "patients">("doctors");
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,8 +32,9 @@ const AdminApproval = () => {
             }
         });
 
-console.log("filteredUsers", filteredUsers);
-    
+    useEffect(() => {
+        fetchPendingUsers();
+    }, []);
 
     const baseUrl = import.meta.env.VITE_BASE_URL;
     const modalActions: ButtonProps[] = [
@@ -48,7 +48,7 @@ console.log("filteredUsers", filteredUsers);
             text: "Decline",
             onClickHandler: () => {
                 if (selectedUser) {
-                    
+
                     handleAction(selectedUser.id, "reject");
 
                 }
@@ -60,31 +60,9 @@ console.log("filteredUsers", filteredUsers);
     ];
 
     useEffect(() => {
-        const fetchPendingUsers = async () => {
-            try {
-
-                const response = await fetch(`${baseUrl}/admin/users/pending`, {
-                    credentials: "include",
-                });
-
-                if (!response.ok) {
-
-                    throw new Error("Failed to fetch pending users");
-                }
-
-                const data = await response.json();
-                setPendingUsers(data);
-            } catch (err: any) {
-                setError(err.message || "Error occurred");
-
-            } finally {
-                setLoading(false);
 
 
-            }
-        };
 
-        fetchPendingUsers();
     }, []);
 
     const handleAction = async (userId: string, action: "accept" | "reject") => {
@@ -114,7 +92,7 @@ console.log("filteredUsers", filteredUsers);
             alert(err.message || `Failed to ${action} user`);
         }
         finally {
-            setLoading(false); 
+            setLoading(false);
             handleCloseModal();
         }
 
@@ -125,7 +103,7 @@ console.log("filteredUsers", filteredUsers);
     }
     return (
         <div className="admin-approval-container">
-      <div className="admin-title">
+            <div className="admin-title">
                 <h2 className="admin-title-text">Our Requests</h2>
                 <div className="admin-line"></div>
             </div>

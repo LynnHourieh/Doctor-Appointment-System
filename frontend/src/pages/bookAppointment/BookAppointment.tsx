@@ -17,7 +17,7 @@ const BookAppointment = () => {
     const query = new URLSearchParams(useLocation().search);
     const queryAppointmentId = query.get("appointmentId");
     const isRescheduled = Boolean(queryAppointmentId);
-    console.log({ queryAppointmentId });
+   
     const [searchTerm, setSearchTerm] = useState("");
     //fetch all doctors
     const [doctors, setDoctors] = useState<UserInfo[]>([]);
@@ -35,7 +35,7 @@ const BookAppointment = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate()
 
-    console.log(isRescheduled)
+    
     const handleSaveAppointment = () => {
         setIsLoading(true);
         const baseUrl = import.meta.env.VITE_BASE_URL;

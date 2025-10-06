@@ -191,7 +191,7 @@ const DoctorDetails = () => {
     const handleInputChange = (name: string, value: string) => {
         setUserInfo(prev => prev && { ...prev, [name]: value })
     }
-console.log(userInfo);
+
     return (
         <div className="doctor-container">
             <div className="doctor-title">

@@ -9,7 +9,6 @@ import AdminApproval from './pages/adminApproval/AdminApproval'
 import Profile from './pages/profile/Profile'
 import Patients from './pages/patients/Patients'
 import PatientDetails from './pages/patientDetails/patientDetails'
-import AdminAppointment from './pages/adminAppointments/adminAppointment'
 import Settings from './pages/settings/Settings'
 import Appointments from './pages/appointments/Appointments'
 import Doctors from './pages/doctors/Doctors'
@@ -25,7 +24,6 @@ function App() {
       <Route element={<MainLayout />}>
       <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-approval" element={<AdminApproval />} />
-        <Route path="/admin-appointments" element={<AdminAppointment />} />
         <Route path="/my-appointments" element={<Appointments />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/" element={<HomePage />} />

@@ -22,7 +22,7 @@ const PatientDetails = () => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { id } = useParams();
-    console.log("id", id)
+   
 
     const bloodTypesOptions = [
         { text: "A+", value: "A+" },
@@ -38,7 +38,7 @@ const PatientDetails = () => {
 
     const [conditions, setConditions] = useState<string[]>([]);
     const [allergies, setAllergies] = useState<string[]>([]);
-    console.log("userInfo", userInfo)
+   
     const getDoctorInfo = (doctor: Partial<DoctorInfo>) => ({
         phone: doctor.phone || "",
         bio: doctor.bio || "",

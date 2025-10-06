@@ -28,7 +28,6 @@ const Settings = () => {
     return Object.fromEntries(dayNames.map(d => [d, { ...off }])) as Availability;
   });
 
-  console.log("Current availability state:", availability);
 
   const timeOptions = [
     { text: "OFF", value: "OFF" },
@@ -53,7 +52,6 @@ const Settings = () => {
     try {
       const res = await fetch(`${baseUrl}/availability/${doctorId}`);
       const data: Array<{ dayOfWeek: number; startTime: string; endTime: string }> = await res.json();
-console.log("Fetched availability:", data);
       // start from all OFF
       const next: Availability = Object.fromEntries(
         dayNames.map(d => [d, { startTime: "OFF", endTime: "OFF" }])

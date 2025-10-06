@@ -19,7 +19,7 @@ const MainLayout = () => {
     (isDoctor || isAdmin) && { label: "Patients", url: "/patients" },
     (isPatient || isAdmin) && { label: "Doctors", url: "/doctors" },
     isAdmin && { label: "Admin Approval", url: "/admin-approval" },
-    isAdmin && { label: "Appointments", url: "/admin-appointments" },
+    
     
     (isPatient || isDoctor) && { label: "My Appointments", url: "/my-appointments" },
     isPatient && { label: "Book Appointment", url: "/book-appointment" },

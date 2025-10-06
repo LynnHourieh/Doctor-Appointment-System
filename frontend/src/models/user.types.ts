@@ -48,3 +48,15 @@ export interface GetProfileResponse extends BaseUser {
     doctor?: Partial<DoctorInfo>;
     patient?: Partial<PatientInfo>;
 }
+
+
+
+
+export interface AdminContextType {
+  pendingUsers: BaseUser[];
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+  error: string | null;
+  fetchPendingUsers: () => void;
+  setPendingUsers: (users: BaseUser[] | ((prev: BaseUser[]) => BaseUser[])) => void;
+}
